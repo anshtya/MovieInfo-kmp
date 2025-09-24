@@ -17,7 +17,8 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "MovieInfo"
+rootProject.name = "MovieInfo-kmp"
 include(":app")
 include(":feature")
 include(":data")
+include(":common-data")
