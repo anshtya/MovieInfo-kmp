@@ -57,6 +57,7 @@ espresso-core = { group = "androidx.test.espresso", name = "espresso-core", vers
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 koin-annotations = { group = "io.insert-koin", name = "koin-annotations", version.ref = "koinAnnotations" }
 koin-bom = { group = "io.insert-koin", name = "koin-bom", version.ref = "koinBom" }
+koin-androidx-workmanager = { group = "io.insert-koin", name = "koin-androidx-workmanager" }
 koin-core = { group = "io.insert-koin", name = "koin-core" }
 koin-ksp-compiler = { group = "io.insert-koin", name = "koin-ksp-compiler", version.ref = "koinAnnotations" }
 kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }

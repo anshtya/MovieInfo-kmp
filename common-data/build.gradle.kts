@@ -26,6 +26,8 @@ kotlin {
         }.configure {
             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
+
+        androidResources.enable = true
     }
 
     // For iOS targets, this is also where you should
@@ -77,6 +79,8 @@ kotlin {
 
         androidMain {
             dependencies {
+                implementation(libs.androidx.work.runtime.ktx)
+                implementation(libs.koin.androidx.workmanager)
                 implementation(libs.ktor.client.okhttp)
             }
         }
