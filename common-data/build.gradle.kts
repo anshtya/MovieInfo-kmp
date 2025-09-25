@@ -54,6 +54,9 @@ kotlin {
 
         commonMain {
             dependencies {
+                implementation(libs.androidx.datastore.preferences)
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 api(libs.koin.annotations)
                 implementation(libs.koin.core)
@@ -93,20 +96,34 @@ kotlin {
         }
     }
 
+    targets.configureEach {
+        compilations.configureEach {
+            compileTaskProvider.get().compilerOptions {
+                freeCompilerArgs.add("-Xexpect-actual-classes")
+            }
+        }
+    }
 }
 
 // KSP Tasks
 dependencies {
     add("kspCommonMainMetadata", libs.koin.ksp.compiler)
-    add("kspAndroid", libs.koin.ksp.compiler)
-    add("kspIosX64", libs.koin.ksp.compiler)
-    add("kspIosArm64", libs.koin.ksp.compiler)
-    add("kspIosSimulatorArm64", libs.koin.ksp.compiler)
+
+    listOf(
+        "kspAndroid",
+        "kspIosSimulatorArm64",
+        "kspIosX64",
+        "kspIosArm64"
+    ).forEach {
+        add(it, libs.androidx.room.compiler)
+        add(it, libs.koin.ksp.compiler)
+    }
 }
 
 ksp {
     arg("KOIN_CONFIG_CHECK","true")
     arg("KOIN_DEFAULT_MODULE","false")
+    arg("room.schemaLocation", "${projectDir}/schemas")
 }
 
 // Trigger Common Metadata Generation from Native tasks
