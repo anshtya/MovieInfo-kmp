@@ -4,10 +4,10 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import org.koin.core.scope.Scope
 
-actual class ContextWrapper
+internal actual class ContextWrapper
 
 @Module
-actual class ContextModule {
+internal actual class ContextModule {
     @Single
     actual fun providesContextWrapper(scope: Scope): ContextWrapper {
         return ContextWrapper()

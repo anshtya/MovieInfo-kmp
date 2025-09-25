@@ -25,7 +25,7 @@ internal const val databaseName = "movie_info.db"
     exportSchema = true
 )
 @ConstructedBy(MovieInfoDatabaseConstructor::class)
-abstract class MovieInfoDatabase : RoomDatabase() {
+internal abstract class MovieInfoDatabase : RoomDatabase() {
     abstract fun favoriteContentDao(): FavoriteContentDao
 
     abstract fun watchlistContentDao(): WatchlistContentDao

@@ -10,7 +10,7 @@ import com.anshtya.movieinfo.common.data.local.database.entity.WatchlistContentE
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface WatchlistContentDao {
+internal interface WatchlistContentDao {
 
     @Query("SELECT * FROM watchlist_content WHERE media_type = 'movie' ORDER BY id DESC")
     fun getMoviesWatchlist(): Flow<List<WatchlistContentEntity>>

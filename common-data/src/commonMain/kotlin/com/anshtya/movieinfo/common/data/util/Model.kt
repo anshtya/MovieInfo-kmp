@@ -3,7 +3,7 @@ package com.anshtya.movieinfo.common.data.util
 import com.anshtya.movieinfo.common.data.local.database.entity.AccountDetailsEntity
 import com.anshtya.movieinfo.common.data.network.model.auth.NetworkAccountDetails
 
-fun NetworkAccountDetails.asEntity(): AccountDetailsEntity {
+internal fun NetworkAccountDetails.asEntity(): AccountDetailsEntity {
     return AccountDetailsEntity(
         id = id,
         name = name,

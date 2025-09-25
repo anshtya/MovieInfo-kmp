@@ -10,7 +10,7 @@ import com.anshtya.movieinfo.common.data.local.database.entity.FavoriteContentEn
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FavoriteContentDao {
+internal interface FavoriteContentDao {
 
     @Query("SELECT * FROM favorite_content WHERE media_type = 'movie' ORDER BY id DESC")
     fun getFavoriteMovies(): Flow<List<FavoriteContentEntity>>

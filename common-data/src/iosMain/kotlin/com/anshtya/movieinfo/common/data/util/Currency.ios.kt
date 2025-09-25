@@ -4,7 +4,7 @@ import platform.Foundation.NSNumber
 import platform.Foundation.NSNumberFormatter
 import platform.Foundation.NSNumberFormatterDecimalStyle
 
-actual fun formatCurrency(number: Int): String {
+internal actual fun formatCurrency(number: Int): String {
     val formatter = NSNumberFormatter().apply {
         numberStyle = NSNumberFormatterDecimalStyle
     }

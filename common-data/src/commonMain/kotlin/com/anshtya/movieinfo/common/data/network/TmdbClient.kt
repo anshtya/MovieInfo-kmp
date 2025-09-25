@@ -24,7 +24,7 @@ import io.ktor.client.request.setBody
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headers
 
-class TmdbClient(
+internal class TmdbClient(
     private val httpClient: HttpClient
 ) {
     suspend fun getMovieLists(

@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.anshtya.movieinfo.common.data.local.database.entity.AccountDetailsEntity
 
 @Dao
-interface AccountDetailsDao {
+internal interface AccountDetailsDao {
     @Query("SELECT * FROM account_details LIMIT 1")
     suspend fun getAccountDetails(): AccountDetailsEntity?
 
