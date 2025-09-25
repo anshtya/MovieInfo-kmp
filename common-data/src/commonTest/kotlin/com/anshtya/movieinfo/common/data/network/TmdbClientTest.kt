@@ -16,7 +16,7 @@ import kotlin.test.assertTrue
 
 class TmdbApiTest {
     @Test
-    fun `test deserialization`() = runTest {
+    fun testDeserialization() = runTest {
         val mockEngine = MockEngine { request ->
             respond(
                 content = ByteReadChannel(testResponse),
@@ -41,7 +41,7 @@ class TmdbApiTest {
     }
 
     @Test
-    fun `test error deserialization`() = runTest {
+    fun testErrorDeserialization() = runTest {
         val mockEngine = MockEngine { request ->
             respond(
                 content = ByteReadChannel("""
