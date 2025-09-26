@@ -17,7 +17,7 @@ data class NetworkEpisodeDetails(
     @SerialName("season_number") val seasonNumber: Int,
     @SerialName("show_id") val showId: Int,
     @SerialName("still_path") val stillPath: String?,
-    @SerialName("vote_average") val voteAverage: Double,
+    @SerialName("vote_average") val voteAverage: Float,
     @SerialName("vote_count") val voteCount: Int
 )
 

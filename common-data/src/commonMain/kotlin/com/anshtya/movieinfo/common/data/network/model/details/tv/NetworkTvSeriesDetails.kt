@@ -43,7 +43,7 @@ data class NetworkTvSeriesDetails(
     val status: String,
     val tagline: String,
     val type: String,
-    @SerialName("vote_average") val voteAverage: Double,
+    @SerialName("vote_average") val voteAverage: Float,
     @SerialName("vote_count") val voteCount: Int
 ) {
     fun getRuntime(): Int {

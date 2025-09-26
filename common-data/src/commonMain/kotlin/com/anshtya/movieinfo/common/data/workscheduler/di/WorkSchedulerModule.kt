@@ -7,7 +7,7 @@ import org.koin.core.annotation.Single
 
 @Module
 @ComponentScan
-internal class WorkSchedulerModule {
+class WorkSchedulerModule {
     @Single
     fun workScheduler(
         provider: WorkSchedulerProvider

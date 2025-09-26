@@ -1,5 +1,6 @@
 package com.anshtya.movieinfo.common.data.workscheduler
 
+import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
 
 /**
@@ -8,14 +9,14 @@ import com.anshtya.movieinfo.common.data.model.MediaType
 data class LibraryWork(
     val mediaId: Int,
     val mediaType: MediaType,
-    val workType: LibraryWorkType,
+    val workType: LibraryType,
     val itemExistLocally: Boolean
 ) {
     companion object {
         fun favoriteItemWork(mediaId: Int, mediaType: MediaType, itemExists: Boolean) =
-            LibraryWork(mediaId, mediaType, LibraryWorkType.FAVORITE, itemExists)
+            LibraryWork(mediaId, mediaType, LibraryType.FAVORITE, itemExists)
 
         fun watchlistItemWork(mediaId: Int, mediaType: MediaType, itemExists: Boolean) =
-            LibraryWork(mediaId, mediaType, LibraryWorkType.WATCHLIST, itemExists)
+            LibraryWork(mediaId, mediaType, LibraryType.WATCHLIST, itemExists)
     }
 }

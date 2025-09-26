@@ -9,6 +9,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.workscheduler.util.FAVORITES_TAG
 import com.anshtya.movieinfo.common.data.workscheduler.util.WATCHLIST_TAG
@@ -60,7 +61,7 @@ internal class AndroidWorkScheduler(
     override fun isWorkNotScheduled(
         mediaId: Int,
         mediaType: MediaType,
-        workType: LibraryWorkType
+        workType: LibraryType
     ): Boolean {
         return workManager.getWorkInfosForUniqueWork(
             generateWorkerName(
@@ -80,11 +81,11 @@ internal class AndroidWorkScheduler(
     private fun generateWorkerName(
         mediaId: Int,
         mediaType: MediaType,
-        workType: LibraryWorkType
+        workType: LibraryType
     ): String {
         return when (workType) {
-            LibraryWorkType.FAVORITE -> "$FAVORITES_TAG-${mediaId}-${mediaType.name}"
-            LibraryWorkType.WATCHLIST -> "$WATCHLIST_TAG-${mediaId}-${mediaType.name}"
+            LibraryType.FAVORITE -> "$FAVORITES_TAG-${mediaId}-${mediaType.name}"
+            LibraryType.WATCHLIST -> "$WATCHLIST_TAG-${mediaId}-${mediaType.name}"
         }
     }
 

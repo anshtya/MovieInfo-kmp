@@ -1,5 +1,6 @@
 package com.anshtya.movieinfo.common.data.workscheduler
 
+import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
 
 /**
@@ -10,7 +11,7 @@ internal interface LibraryWorkExecutor {
     suspend fun executeLibraryWork(
         id: Int,
         mediaType: MediaType,
-        libraryWorkType: LibraryWorkType,
+        libraryType: LibraryType,
         itemExistsLocally: Boolean
     ): Boolean
 }

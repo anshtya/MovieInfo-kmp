@@ -1,5 +1,4 @@
 pluginManagement {
-    includeBuild("build-logic")
     repositories {
         google()
         mavenCentral()
@@ -17,7 +16,6 @@ dependencyResolutionManagement {
 
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
-rootProject.name = "MovieInfo-kmp"
-include(":app")
-include(":feature")
+rootProject.name = "MovieInfo"
+include(":composeApp")
 include(":common-data")

@@ -4,7 +4,7 @@ import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 import org.koin.core.scope.Scope
 
-internal expect class ContextWrapper
+expect class ContextWrapper
 
 @Module
 internal expect class ContextModule() {

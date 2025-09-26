@@ -11,6 +11,6 @@ data class TvEpisodeDetails(
     val seasonNumber: Int,
     val showId: Int,
     val stillPath: String,
-    val voteAverage: Double,
+    val voteAverage: Float,
     val voteCount: Int
 )

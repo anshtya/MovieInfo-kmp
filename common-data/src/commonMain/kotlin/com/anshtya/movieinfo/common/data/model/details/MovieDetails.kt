@@ -18,7 +18,7 @@ data class MovieDetails(
     val posterPath: String,
     val productionCompanies: String,
     val productionCountries: String,
-    val rating: Double,
+    val rating: Float,
     val recommendations: List<Content>,
     val releaseDate: String,
     val releaseYear: Int,

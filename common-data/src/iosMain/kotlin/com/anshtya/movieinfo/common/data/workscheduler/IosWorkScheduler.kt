@@ -1,5 +1,6 @@
 package com.anshtya.movieinfo.common.data.workscheduler
 
+import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
 
 internal class IosWorkScheduler(): WorkScheduler {
@@ -16,7 +17,7 @@ internal class IosWorkScheduler(): WorkScheduler {
     override fun isWorkNotScheduled(
         mediaId: Int,
         mediaType: MediaType,
-        workType: LibraryWorkType
+        workType: LibraryType
     ): Boolean {
         println("Not yet implemented")
         return true

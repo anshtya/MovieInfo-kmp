@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.io.IOException
 
 class TestLibraryRepository : LibraryRepository {
     private var generateError = false
@@ -43,12 +42,12 @@ class TestLibraryRepository : LibraryRepository {
         return testLibraryItems.find { it.id == mediaId } != null
     }
 
-    override suspend fun addOrRemoveFavorite(libraryItem: LibraryItem) {
+    override suspend fun addOrRemoveFavorite(libraryItem: LibraryItem): Result<Unit> {
         return if (generateError) {
-            throw IOException()
+            Result.failure(Exception("error"))
         } else {
             // For testing add
-            if (libraryItem.id == 0) return
+            if (libraryItem.id == 0) return Result.success(Unit)
 
             // For testing delete
             // Since delete button is present on items list, list needs to be updated
@@ -59,15 +58,17 @@ class TestLibraryRepository : LibraryRepository {
 
                 else -> {}
             }
+
+            Result.success(Unit)
         }
     }
 
-    override suspend fun addOrRemoveFromWatchlist(libraryItem: LibraryItem) {
+    override suspend fun addOrRemoveFromWatchlist(libraryItem: LibraryItem): Result<Unit> {
         return if (generateError) {
-            throw IOException()
+            Result.failure(Exception("error"))
         } else {
             // For testing add
-            if (libraryItem.id == 0) return
+            if (libraryItem.id == 0) return Result.success(Unit)
 
             // For testing delete
             // Since delete button is present on items list, list needs to be updated
@@ -78,6 +79,7 @@ class TestLibraryRepository : LibraryRepository {
 
                 else -> {}
             }
+            Result.success(Unit)
         }
     }
 

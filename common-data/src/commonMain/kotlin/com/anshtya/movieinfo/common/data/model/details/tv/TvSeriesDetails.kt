@@ -28,7 +28,7 @@ data class TvSeriesDetails(
     val posterPath: String,
     val productionCompanies: String,
     val productionCountries: String,
-    val rating: Double,
+    val rating: Float,
     val recommendations: List<Content>,
     val releaseYear: Int,
 //    val seasons: List<Season>,

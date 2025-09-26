@@ -21,7 +21,7 @@ data class NetworkMovieDetails(
     val id: Int,
     @SerialName("original_language") val originalLanguage: String,
     val overview: String,
-    val popularity: Double,
+    val popularity: Float,
     @SerialName("poster_path") val posterPath: String?,
     @SerialName("production_companies") val productionCompanies: List<NetworkProductionCompany>,
     @SerialName("production_countries") val productionCountries: List<NetworkProductionCountry>,
@@ -31,7 +31,7 @@ data class NetworkMovieDetails(
     val runtime: Int,
     val tagline: String,
     val title: String,
-    @SerialName("vote_average") val voteAverage: Double,
+    @SerialName("vote_average") val voteAverage: Float,
     @SerialName("vote_count") val voteCount: Int
 )
 

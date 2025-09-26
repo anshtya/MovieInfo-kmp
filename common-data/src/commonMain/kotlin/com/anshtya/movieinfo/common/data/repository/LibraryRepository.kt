@@ -20,7 +20,7 @@ interface LibraryRepository {
         mediaType: MediaType
     ): Boolean
 
-    suspend fun addOrRemoveFavorite(libraryItem: LibraryItem)
+    suspend fun addOrRemoveFavorite(libraryItem: LibraryItem): Result<Unit>
 
-    suspend fun addOrRemoveFromWatchlist(libraryItem: LibraryItem)
+    suspend fun addOrRemoveFromWatchlist(libraryItem: LibraryItem): Result<Unit>
 }
