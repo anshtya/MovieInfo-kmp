@@ -6,7 +6,6 @@ import com.anshtya.movieinfo.common.data.repository.LibraryRepository
 import com.anshtya.movieinfo.common.data.repository.test.data.movieMediaType
 import com.anshtya.movieinfo.common.data.repository.test.data.testLibraryItems
 import com.anshtya.movieinfo.common.data.repository.test.data.tvMediaType
-import com.anshtya.movieinfo.common.data.workscheduler.LibraryWorkType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -81,17 +80,6 @@ class TestLibraryRepository : LibraryRepository {
             }
         }
     }
-
-    override suspend fun executeLibraryWork(
-        id: Int,
-        mediaType: MediaType,
-        libraryWorkType: LibraryWorkType,
-        itemExistsLocally: Boolean
-    ): Boolean = true
-
-    override suspend fun syncFavorites(): Boolean = true
-
-    override suspend fun syncWatchlist(): Boolean = true
 
     fun generateError(value: Boolean) {
         generateError = value

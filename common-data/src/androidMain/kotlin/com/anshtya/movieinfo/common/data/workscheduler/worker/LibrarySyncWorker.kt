@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.ForegroundInfo
 import androidx.work.WorkerParameters
-import com.anshtya.movieinfo.common.data.repository.LibraryRepository
+import com.anshtya.movieinfo.common.data.workscheduler.LibrarySyncManager
 import com.anshtya.movieinfo.common.data.workscheduler.util.SYNC_NOTIFICATION_ID
 import com.anshtya.movieinfo.common.data.workscheduler.util.workNotification
 import kotlinx.coroutines.async
@@ -14,18 +14,18 @@ import org.koin.android.annotation.KoinWorker
 import org.koin.core.annotation.InjectedParam
 
 @KoinWorker
-class LibrarySyncWorker(
+internal class LibrarySyncWorker(
     @InjectedParam private val appContext: Context,
     @InjectedParam workerParams: WorkerParameters,
-    private val libraryRepository: LibraryRepository,
+    private val librarySyncManager: LibrarySyncManager,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun getForegroundInfo(): ForegroundInfo {
         return ForegroundInfo(SYNC_NOTIFICATION_ID, appContext.workNotification())
     }
 
     override suspend fun doWork(): Result = coroutineScope {
-        val syncFavorites = async { libraryRepository.syncFavorites() }
-        val syncWatchList = async { libraryRepository.syncWatchlist() }
+        val syncFavorites = async { librarySyncManager.syncFavorites() }
+        val syncWatchList = async { librarySyncManager.syncWatchlist() }
         val syncSuccessful = awaitAll(syncFavorites, syncWatchList).all { it }
 
         return@coroutineScope if (syncSuccessful) {

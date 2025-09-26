@@ -13,8 +13,10 @@ import com.anshtya.movieinfo.common.data.network.model.FavoriteRequest
 import com.anshtya.movieinfo.common.data.network.model.NetworkContent
 import com.anshtya.movieinfo.common.data.network.model.WatchlistRequest
 import com.anshtya.movieinfo.common.data.network.model.asModel
+import com.anshtya.movieinfo.common.data.workscheduler.LibrarySyncManager
 import com.anshtya.movieinfo.common.data.workscheduler.LibrarySynchronizer
 import com.anshtya.movieinfo.common.data.workscheduler.LibraryWork
+import com.anshtya.movieinfo.common.data.workscheduler.LibraryWorkExecutor
 import com.anshtya.movieinfo.common.data.workscheduler.LibraryWorkType
 import com.anshtya.movieinfo.common.data.workscheduler.WorkScheduler
 import kotlinx.coroutines.flow.Flow
@@ -28,7 +30,7 @@ internal class LibraryRepositoryImpl(
     private val watchlistContentDao: WatchlistContentDao,
     private val accountDetailsDao: AccountDetailsDao,
     private val workScheduler: WorkScheduler
-) : LibraryRepository, LibrarySynchronizer() {
+) : LibraryRepository, LibraryWorkExecutor, LibrarySyncManager, LibrarySynchronizer() {
     override val favoriteMovies: Flow<List<LibraryItem>> =
         favoriteContentDao.getFavoriteMovies().map {
             it.map { entity -> entity.asLibraryItem() }

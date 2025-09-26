@@ -6,7 +6,7 @@ import com.anshtya.movieinfo.common.data.model.MediaType
  * Interface to add capability to execute operation of [LibraryWork] work enqueued by
  * [WorkScheduler].
  */
-interface LibraryWorkOperation {
+internal interface LibraryWorkExecutor {
     suspend fun executeLibraryWork(
         id: Int,
         mediaType: MediaType,

@@ -4,17 +4,17 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.anshtya.movieinfo.common.data.model.MediaType
-import com.anshtya.movieinfo.common.data.repository.LibraryRepository
+import com.anshtya.movieinfo.common.data.workscheduler.LibraryWorkExecutor
 import com.anshtya.movieinfo.common.data.workscheduler.LibraryWorkType
 import com.anshtya.movieinfo.common.data.workscheduler.util.getEnum
 import org.koin.android.annotation.KoinWorker
 import org.koin.core.annotation.InjectedParam
 
 @KoinWorker
-class LibraryTaskWorker(
+internal class LibraryTaskWorker(
     @InjectedParam private val appContext: Context,
     @InjectedParam workerParams: WorkerParameters,
-    private val libraryRepository: LibraryRepository
+    private val libraryWorkExecutor: LibraryWorkExecutor
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         val itemId = inputData.getInt(TASK_KEY, 0)
@@ -22,7 +22,7 @@ class LibraryTaskWorker(
         val taskType = inputData.getEnum<LibraryWorkType>(ITEM_TYPE_KEY)
         val itemExists = inputData.getBoolean(ITEM_EXISTS_KEY, false)
 
-        val syncSuccessful = libraryRepository.executeLibraryWork(
+        val syncSuccessful = libraryWorkExecutor.executeLibraryWork(
             id = itemId,
             mediaType = mediaType,
             libraryWorkType = taskType,
