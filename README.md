@@ -1,38 +1,28 @@
-# MovieInfo
-Provides movies, tv shows and person information from [TMDB API](https://api.tmdb.org/).
+# MovieInfo-kmp
+A cross-platform TMDB-based app with account integration and library synchronization, built with Kotlin Multiplatform (KMP) and Compose Multiplatform (CMP). Features shared business logic an UI across Android and iOS.
 
 ## 📸 Screenshots
 |   |   |   |   |
 |---|---|---|---|
-| <img src = "./images/onboarding.png" width = 240/> | <img src = "./images/movies.png" width = 240/> | <img src = "./images/tv.png" width = 240/> | <img src = "./images/details.png" width = 240/> |
-| <img src = "./images/search.png" width = 240/> | <img src = "./images/you.png" width = 240/> | <img src = "./images/library.png" width = 240/> |
-
+| <img width="240" height="2424" alt="Screenshot_20250928_172209" src="https://github.com/user-attachments/assets/779ec179-574b-4c68-93e6-65de09a8b178" /> | <img width="240" height="2424" alt="Screenshot_20250928_172328" src="https://github.com/user-attachments/assets/f6945d86-71d0-4748-be75-61d8ef8b8bcf" /> | <img width="240" height="2424" alt="Screenshot_20250928_173654" src="https://github.com/user-attachments/assets/89ba4967-e1e1-4b9c-bbec-67421c88818a" /> | <img width="240" height="2424" alt="Screenshot_20250928_172344" src="https://github.com/user-attachments/assets/62cb6c9c-bfba-4881-b623-b837c71d1886" /> |
 
 ## ✨ Features
 - Discover popular and trending movies and TV shows.
-- Connect your TMDB account to access your TMDB watchlists and favorites.
+- Cross-platform compatibility - Shared codebase for Android and iOS
+- Discover content - Browse popular and trending movies and TV shows
+- TMDB integration - Connect your TMDB account to access watchlists and favorites
 
-## 🏗️ Architecture
-- Built with a multi-module architecture, utilizing a hybrid approach that combines feature and layer-based modularization.
-- Inspired by [common modularization patterns](https://developer.android.com/topic/modularization/patterns).
+## 🔄 Migration from Native Android
+This repository represents the evolution of the original [MovieInfo](https://github.com/anshtya/MovieInfo) app into a cross-platform solution. The core functionality remains the same while extending support to iOS.
 
 ## 🖥️Installation
 To clone the project, run
 
 ```
-git clone git@github.com:anshtya/MovieInfo.git
+git clone git@github.com:anshtya/MovieInfo-kmp.git
 ```
-Open the project in Android Studio.
 
 Visit [TMDB API](https://api.tmdb.org/) to obtain Access Token. Open `local.poperties` file and type the following:
 ```
 ACCESS_TOKEN = your_access_token
-BASE_URL=https://api.themoviedb.org/3/
 ```
-
-and rebuild the project.
-
-## ℹ️Disclaimer
-<img src = "./images/tmdb-logo.svg" width = 120>
-
-This product uses the [TMDB API](https://api.tmdb.org/) but is not endorsed or certified by [TMDB](https://themoviedb.org).
