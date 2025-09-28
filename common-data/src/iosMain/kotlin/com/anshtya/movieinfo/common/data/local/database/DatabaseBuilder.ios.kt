@@ -4,20 +4,17 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.anshtya.movieinfo.common.data.util.ContextWrapper
 import kotlinx.cinterop.ExperimentalForeignApi
-import org.koin.core.annotation.Single
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-@Single
-internal actual class DatabaseBuilder actual constructor(val ctx: ContextWrapper) {
-    @Single
-    actual fun builder(): RoomDatabase.Builder<MovieInfoDatabase> {
-        val dbFilePath = documentDirectory() + "/$databaseName"
-        return Room.databaseBuilder<MovieInfoDatabase>(
-            name = dbFilePath,
-        )
-    }
+internal actual fun databaseBuilder(
+    ctx: ContextWrapper
+): RoomDatabase.Builder<MovieInfoDatabase> {
+    val dbFilePath = documentDirectory() + "/$databaseName"
+    return Room.databaseBuilder<MovieInfoDatabase>(
+        name = dbFilePath,
+    )
 }
 
 @OptIn(ExperimentalForeignApi::class)

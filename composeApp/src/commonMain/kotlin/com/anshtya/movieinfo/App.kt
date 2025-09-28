@@ -13,11 +13,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.common.data.local.datastore.preferences.SelectedDarkMode
 import com.anshtya.movieinfo.ui.Main
 import com.anshtya.movieinfo.ui.theme.MovieInfoTheme
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-@Preview
 fun App(
     onHideSplashScreen: () -> Unit = {},
     viewModel: AppViewModel = koinViewModel()

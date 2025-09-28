@@ -2,7 +2,6 @@ package com.anshtya.movieinfo.common.data.network.di
 
 import com.anshtya.movieinfo.common.data.BuildKonfig
 import com.anshtya.movieinfo.common.data.network.HttpException
-import com.anshtya.movieinfo.common.data.network.TmdbClient
 import com.anshtya.movieinfo.common.data.network.model.auth.ErrorResponse
 import io.ktor.client.HttpClient
 import io.ktor.client.HttpClientConfig
@@ -30,15 +29,6 @@ internal class HttpClientModule {
                 header(HttpHeaders.Authorization, BuildKonfig.ACCESS_TOKEN)
             }
         }
-    }
-
-    @Single
-    fun tmdbClient(
-        httpClient: HttpClient
-    ): TmdbClient {
-        return TmdbClient(
-            httpClient = httpClient
-        )
     }
 }
 

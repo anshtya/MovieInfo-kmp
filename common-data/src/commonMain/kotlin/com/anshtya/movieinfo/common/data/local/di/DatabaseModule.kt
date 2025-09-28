@@ -1,7 +1,6 @@
 package com.anshtya.movieinfo.common.data.local.di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.anshtya.movieinfo.common.data.local.database.DatabaseBuilder
 import com.anshtya.movieinfo.common.data.local.database.MovieInfoDatabase
 import com.anshtya.movieinfo.common.data.local.database.MovieInfoDatabase.Companion.MIGRATION_10_11
 import com.anshtya.movieinfo.common.data.local.database.MovieInfoDatabase.Companion.MIGRATION_11_12
@@ -17,18 +16,21 @@ import com.anshtya.movieinfo.common.data.local.database.MovieInfoDatabase.Compan
 import com.anshtya.movieinfo.common.data.local.database.dao.AccountDetailsDao
 import com.anshtya.movieinfo.common.data.local.database.dao.FavoriteContentDao
 import com.anshtya.movieinfo.common.data.local.database.dao.WatchlistContentDao
-import org.koin.core.annotation.ComponentScan
+import com.anshtya.movieinfo.common.data.local.database.databaseBuilder
+import com.anshtya.movieinfo.common.data.util.ContextModule
+import com.anshtya.movieinfo.common.data.util.ContextWrapper
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
-@Module
-@ComponentScan("com.anshtya.movieinfo.common.data.local.database")
+@Module(
+    includes = [ContextModule::class]
+)
 internal class DatabaseModule {
     @Single
     fun provideMovieInfoDatabase(
-        builder: DatabaseBuilder
+        ctx: ContextWrapper
     ): MovieInfoDatabase {
-        return builder.builder()
+        return databaseBuilder(ctx)
             .addMigrations(
                 MIGRATION_1_2,
                 MIGRATION_2_3,

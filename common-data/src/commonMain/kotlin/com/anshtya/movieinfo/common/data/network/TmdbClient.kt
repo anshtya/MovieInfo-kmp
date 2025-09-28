@@ -21,9 +21,11 @@ import io.ktor.client.request.get
 import io.ktor.client.request.parameter
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
-import io.ktor.http.HttpHeaders
-import io.ktor.http.headers
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import org.koin.core.annotation.Single
 
+@Single
 internal class TmdbClient(
     private val httpClient: HttpClient
 ) {
@@ -119,9 +121,7 @@ internal class TmdbClient(
     ): Result<Unit> {
         return runCatching {
             httpClient.post("account/$accountId/favorite") {
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                contentType(ContentType.Application.Json)
                 setBody(favoriteRequest)
             }
         }
@@ -133,9 +133,7 @@ internal class TmdbClient(
     ): Result<Unit> {
         return runCatching {
             httpClient.post("account/$accountId/watchlist") {
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                contentType(ContentType.Application.Json)
                 setBody(watchlistRequest)
             }
         }
@@ -153,9 +151,7 @@ internal class TmdbClient(
     ): Result<LoginResponse> {
         return runCatching {
             httpClient.post("authentication/token/validate_with_login") {
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                contentType(ContentType.Application.Json)
                 setBody(loginRequest)
             }.body<LoginResponse>()
         }
@@ -166,9 +162,7 @@ internal class TmdbClient(
     ): Result<SessionResponse> {
         return runCatching {
             httpClient.post("authentication/session/new") {
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                contentType(ContentType.Application.Json)
                 setBody(sessionRequest)
             }.body<SessionResponse>()
         }
@@ -198,9 +192,7 @@ internal class TmdbClient(
     ): Result<Unit> {
         return runCatching {
             httpClient.delete("authentication/session") {
-                headers {
-                    append(HttpHeaders.ContentType, "application/json")
-                }
+                contentType(ContentType.Application.Json)
                 setBody(deleteSessionRequest)
             }
         }

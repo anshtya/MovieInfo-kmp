@@ -11,7 +11,9 @@ import com.anshtya.movieinfo.common.data.network.model.auth.LoginRequest
 import com.anshtya.movieinfo.common.data.network.model.auth.SessionRequest
 import com.anshtya.movieinfo.common.data.util.asEntity
 import com.anshtya.movieinfo.common.data.workscheduler.WorkScheduler
+import org.koin.core.annotation.Single
 
+@Single
 internal class AuthRepositoryImpl(
     private val tmdbClient: TmdbClient,
     private val favoriteContentDao: FavoriteContentDao,
@@ -55,11 +57,10 @@ internal class AuthRepositoryImpl(
         return runCatching {
             val sessionId = sessionManager.getSessionId()!!
             val deleteSessionRequest = DeleteSessionRequest(sessionId)
-
             tmdbClient.deleteSession(deleteSessionRequest).getOrThrow()
+
             sessionManager.deleteSessionId()
             accountDetailsDao.deleteAccountDetails(accountId)
-
             favoriteContentDao.deleteAllFavoriteItems()
             watchlistContentDao.deleteAllWatchlistItems()
         }

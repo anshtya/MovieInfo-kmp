@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import org.koin.android.annotation.KoinViewModel
@@ -46,13 +47,10 @@ class SearchViewModel(
             searchRepository.getSearchSuggestions(
                 query = query,
                 includeAdult = includeAdult
-            ).fold(
-                onSuccess = { it },
-                onFailure = { throwable ->
-                    _errorMessage.update { throwable.message }
-                    emptyList()
-                }
-            )
+            ).getOrElse { emptyList() }
+        }
+        .runningFold(emptyList<SearchItem>()) { previous, current ->
+            current.ifEmpty { previous }
         }
         .stateIn(
             scope = viewModelScope,

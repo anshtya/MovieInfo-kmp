@@ -6,7 +6,9 @@ import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
 import com.anshtya.movieinfo.common.data.model.category.TvSeriesListCategory
 import com.anshtya.movieinfo.common.data.network.TmdbClient
 import com.anshtya.movieinfo.common.data.network.model.asModel
+import org.koin.core.annotation.Single
 
+@Single
 internal class ContentRepositoryImpl(
     private val tmdbClient: TmdbClient,
     private val accountDetailsDao: AccountDetailsDao

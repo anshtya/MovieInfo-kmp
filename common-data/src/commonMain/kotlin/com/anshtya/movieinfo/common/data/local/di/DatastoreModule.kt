@@ -1,30 +1,41 @@
 package com.anshtya.movieinfo.common.data.local.di
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.anshtya.movieinfo.common.data.local.datastore.DatastoreBuilder
 import com.anshtya.movieinfo.common.data.local.datastore.preferences.UserPreferencesDataStore
 import com.anshtya.movieinfo.common.data.local.datastore.session.SessionManager
-import org.koin.core.annotation.ComponentScan
+import com.anshtya.movieinfo.common.data.util.ContextModule
+import com.anshtya.movieinfo.common.data.util.ContextWrapper
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
-@Module
-@ComponentScan("com.anshtya.movieinfo.common.data.local.datastore")
+@Module(
+    includes = [ContextModule::class]
+)
 internal class DatastoreModule {
     @Single
+    fun dataStorePreferences(
+        ctx: ContextWrapper
+    ): DataStore<Preferences> {
+        return DatastoreBuilder(ctx).preferencesDataStore()
+    }
+
+    @Single
     fun userPreferencesDataStore(
-        builder: DatastoreBuilder
+        preferencesDatastore: DataStore<Preferences>
     ): UserPreferencesDataStore {
         return UserPreferencesDataStore(
-            datastore = builder.preferencesDataStore()
+            datastore = preferencesDatastore
         )
     }
 
     @Single
     fun sessionManager(
-        builder: DatastoreBuilder
+        preferencesDatastore: DataStore<Preferences>
     ): SessionManager {
         return SessionManager(
-            datastore = builder.preferencesDataStore()
+            datastore = preferencesDatastore
         )
     }
 }

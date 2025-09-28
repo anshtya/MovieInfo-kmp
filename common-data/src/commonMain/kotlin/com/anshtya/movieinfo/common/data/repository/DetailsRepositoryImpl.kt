@@ -6,7 +6,9 @@ import com.anshtya.movieinfo.common.data.model.people.PersonDetails
 import com.anshtya.movieinfo.common.data.network.TmdbClient
 import com.anshtya.movieinfo.common.data.network.model.details.asModel
 import com.anshtya.movieinfo.common.data.network.model.details.tv.asModel
+import org.koin.core.annotation.Single
 
+@Single
 internal class DetailsRepositoryImpl(
     private val tmdbClient: TmdbClient
 ) : DetailsRepository {

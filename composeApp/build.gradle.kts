@@ -33,12 +33,17 @@ kotlin {
     }
 
     sourceSets {
+        sourceSets.named("commonMain").configure {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+        }
+
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.core.splashscreen)
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.workmanager)
+            implementation(libs.ktor.client.okhttp)
         }
         commonMain.dependencies {
             implementation(projects.commonData)
@@ -53,13 +58,16 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.navigation.compose)
-            implementation(libs.coil)
             implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
             implementation(libs.coil.svg)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.compose.viewmodel)
             implementation(libs.koin.core)
             implementation(libs.material.icons.extended)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -82,7 +90,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.anshtya.movieinfo.cmp"
+        applicationId = "com.anshtya.movieinfo"
         minSdk = 26
         targetSdk = 35
         versionCode = 1
@@ -116,10 +124,16 @@ ksp {
     arg("KOIN_DEFAULT_MODULE", "false")
 }
 
+// Trigger Common Metadata Generation from Native tasks
+tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMetadata" }.configureEach {
+    dependsOn("kspCommonMainKotlinMetadata")
+}
+
 dependencies {
     debugImplementation(compose.uiTooling)
 
     listOf(
+        "kspCommonMainMetadata",
         "kspAndroid",
         "kspIosSimulatorArm64",
         "kspIosArm64"

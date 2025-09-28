@@ -9,7 +9,9 @@ import com.anshtya.movieinfo.common.data.model.AccountDetails
 import com.anshtya.movieinfo.common.data.network.TmdbClient
 import com.anshtya.movieinfo.common.data.util.asEntity
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Single
 
+@Single
 internal class UserRepositoryImpl(
     private val userPreferencesDataStore: UserPreferencesDataStore,
     private val tmdbClient: TmdbClient,

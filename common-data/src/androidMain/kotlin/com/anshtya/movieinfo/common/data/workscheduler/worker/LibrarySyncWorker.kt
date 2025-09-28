@@ -10,13 +10,10 @@ import com.anshtya.movieinfo.common.data.workscheduler.util.workNotification
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import org.koin.android.annotation.KoinWorker
-import org.koin.core.annotation.InjectedParam
 
-@KoinWorker
 internal class LibrarySyncWorker(
-    @InjectedParam private val appContext: Context,
-    @InjectedParam workerParams: WorkerParameters,
+    private val appContext: Context,
+    workerParams: WorkerParameters,
     private val librarySyncManager: LibrarySyncManager,
 ) : CoroutineWorker(appContext, workerParams) {
     override suspend fun getForegroundInfo(): ForegroundInfo {

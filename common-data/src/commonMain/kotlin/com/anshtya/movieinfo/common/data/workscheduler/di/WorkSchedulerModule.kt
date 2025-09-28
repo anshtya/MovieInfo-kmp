@@ -1,17 +1,19 @@
 package com.anshtya.movieinfo.common.data.workscheduler.di
 
+import com.anshtya.movieinfo.common.data.util.ContextModule
+import com.anshtya.movieinfo.common.data.util.ContextWrapper
 import com.anshtya.movieinfo.common.data.workscheduler.WorkScheduler
-import org.koin.core.annotation.ComponentScan
 import org.koin.core.annotation.Module
 import org.koin.core.annotation.Single
 
-@Module
-@ComponentScan
+@Module(
+    includes = [ContextModule::class]
+)
 class WorkSchedulerModule {
     @Single
     fun workScheduler(
-        provider: WorkSchedulerProvider
+        ctx: ContextWrapper
     ): WorkScheduler {
-        return provider.workScheduler()
+        return WorkSchedulerProvider(ctx).workScheduler()
     }
 }

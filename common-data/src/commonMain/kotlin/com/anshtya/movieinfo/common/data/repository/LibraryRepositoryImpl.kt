@@ -22,7 +22,9 @@ import com.anshtya.movieinfo.common.data.workscheduler.WorkScheduler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import org.koin.core.annotation.Single
 
+@Single
 internal class LibraryRepositoryImpl(
     private val tmdbClient: TmdbClient,
     private val favoriteContentDao: FavoriteContentDao,

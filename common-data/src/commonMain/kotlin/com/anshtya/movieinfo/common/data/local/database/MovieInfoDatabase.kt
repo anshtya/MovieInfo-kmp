@@ -136,12 +136,6 @@ internal abstract class MovieInfoDatabase : RoomDatabase() {
             }
         }
 
-        // TODO: check
-//        @DeleteColumn("trending_content", "overview")
-//        @DeleteColumn("free_content", "overview")
-//        @DeleteColumn("popular_content", "overview")
-//        class Migration5to6 : AutoMigrationSpec
-
         val MIGRATION_5_6 = object : Migration(5, 6) {
             override fun migrate(connection: SQLiteConnection) {
                 connection.execSQL("ALTER TABLE trending_content DROP COLUMN overview")

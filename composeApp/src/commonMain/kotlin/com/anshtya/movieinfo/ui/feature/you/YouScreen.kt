@@ -1,5 +1,6 @@
 package com.anshtya.movieinfo.ui.feature.you
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,10 +51,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.svg.SvgDecoder
 import com.anshtya.movieinfo.common.data.local.datastore.preferences.SelectedDarkMode
 import com.anshtya.movieinfo.common.data.model.AccountDetails
 import com.anshtya.movieinfo.common.data.model.LibraryType
@@ -80,6 +77,7 @@ import movieinfo.composeapp.generated.resources.settings_dialog_title
 import movieinfo.composeapp.generated.resources.tmdb_logo
 import movieinfo.composeapp.generated.resources.watchlist
 import movieinfo.composeapp.generated.resources.your_library
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -376,11 +374,8 @@ private fun AttributionInfoDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .decoderFactory(SvgDecoder.Factory())
-                        .data(Res.drawable.tmdb_logo)
-                        .build(),
+                Image(
+                    painter = painterResource(Res.drawable.tmdb_logo),
                     contentDescription = null,
                     modifier = Modifier.size(100.dp)
                 )

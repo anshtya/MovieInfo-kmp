@@ -6,14 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import com.anshtya.movieinfo.common.data.util.ContextWrapper
 import kotlinx.cinterop.ExperimentalForeignApi
 import okio.Path.Companion.toPath
-import org.koin.core.annotation.Single
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
-@Single
 internal actual class DatastoreBuilder actual constructor(ctx: ContextWrapper) {
-    @Single
     actual fun preferencesDataStore(): DataStore<Preferences> {
         return PreferenceDataStoreFactory.createWithPath(
             produceFile = {
