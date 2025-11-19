@@ -25,9 +25,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
+import com.anshtya.movieinfo.ui.FeedType
 import com.anshtya.movieinfo.ui.OnboardingScreen
 import com.anshtya.movieinfo.ui.feature.auth.Auth
 import com.anshtya.movieinfo.ui.feature.auth.authScreen

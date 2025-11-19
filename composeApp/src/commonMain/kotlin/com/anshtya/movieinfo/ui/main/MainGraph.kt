@@ -3,9 +3,9 @@ package com.anshtya.movieinfo.ui.main
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.LibraryType
 import com.anshtya.movieinfo.common.data.model.MediaType
+import com.anshtya.movieinfo.ui.FeedType
 import com.anshtya.movieinfo.ui.feature.movies.MoviesFeedRoute
 import com.anshtya.movieinfo.ui.feature.search.SearchRoute
 import com.anshtya.movieinfo.ui.feature.tv.TvShowsFeedRoute

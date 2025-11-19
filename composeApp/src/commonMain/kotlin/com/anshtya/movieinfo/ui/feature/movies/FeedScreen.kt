@@ -25,9 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
+import com.anshtya.movieinfo.ui.FeedType
 import com.anshtya.movieinfo.ui.component.ContentSectionHeader
 import com.anshtya.movieinfo.ui.component.LazyRowContentSection
 import com.anshtya.movieinfo.ui.component.MediaItemCard

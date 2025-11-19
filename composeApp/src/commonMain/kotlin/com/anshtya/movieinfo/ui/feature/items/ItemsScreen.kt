@@ -20,10 +20,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
 import com.anshtya.movieinfo.common.data.model.category.TvSeriesListCategory
+import com.anshtya.movieinfo.ui.FeedType
 import com.anshtya.movieinfo.ui.component.LazyVerticalContentGrid
 import com.anshtya.movieinfo.ui.component.MediaItemCard
 import com.anshtya.movieinfo.ui.component.TopAppBarWithBackButton

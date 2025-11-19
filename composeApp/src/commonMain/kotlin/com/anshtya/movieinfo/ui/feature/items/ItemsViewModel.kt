@@ -5,10 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.anshtya.movieinfo.common.data.model.Content
-import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
 import com.anshtya.movieinfo.common.data.model.category.TvSeriesListCategory
 import com.anshtya.movieinfo.common.data.repository.ContentRepository
+import com.anshtya.movieinfo.ui.FeedType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
