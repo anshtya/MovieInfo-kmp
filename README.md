@@ -4,7 +4,7 @@ A cross-platform TMDB-based app with account integration and library synchroniza
 ## 📸 Screenshots
 |   |   |   |   |
 |---|---|---|---|
-| <img width="240" height="2424" alt="Screenshot_20250928_172209" src="https://github.com/user-attachments/assets/779ec179-574b-4c68-93e6-65de09a8b178" /> | <img width="240" height="2424" alt="Screenshot_20250928_172328" src="https://github.com/user-attachments/assets/f6945d86-71d0-4748-be75-61d8ef8b8bcf" /> | <img width="240" height="2424" alt="Screenshot_20250928_173654" src="https://github.com/user-attachments/assets/89ba4967-e1e1-4b9c-bbec-67421c88818a" /> | <img width="240" height="2424" alt="Screenshot_20250928_172344" src="https://github.com/user-attachments/assets/62cb6c9c-bfba-4881-b623-b837c71d1886" /> |
+| <img width="240" height="2424" alt="Screenshot_20250928_172209" src="https://github.com/user-attachments/assets/779ec179-574b-4c68-93e6-65de09a8b178" /> | <img width="240" height="2424" alt="Screenshot_20250928_172328" src="https://github.com/user-attachments/assets/f6945d86-71d0-4748-be75-61d8ef8b8bcf" /> | <img width="240" height="2424" alt="Screenshot_20250928_173654" src="https://github.com/user-attachments/assets/9b3ddebb-740f-431b-9432-25a5e7cfb112" /> | <img width="240" height="2424" alt="Screenshot_20250928_172344" src="https://github.com/user-attachments/assets/62cb6c9c-bfba-4881-b623-b837c71d1886" /> |
 
 ## ✨ Features
 - Discover popular and trending movies and TV shows.
@@ -21,6 +21,7 @@ To clone the project, run
 ```
 git clone git@github.com:anshtya/MovieInfo-kmp.git
 ```
+
 
 Visit [TMDB API](https://api.tmdb.org/) to obtain Access Token. Open `local.poperties` file and type the following:
 ```
