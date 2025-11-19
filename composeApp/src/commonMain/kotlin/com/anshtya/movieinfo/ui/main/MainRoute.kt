@@ -1,4 +1,4 @@
-package com.anshtya.movieinfo.navigation
+package com.anshtya.movieinfo.ui.main
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Home
@@ -17,29 +17,34 @@ import movieinfo.composeapp.generated.resources.tv_shows
 import movieinfo.composeapp.generated.resources.you
 import org.jetbrains.compose.resources.StringResource
 
-enum class MovieInfoDestination(
+enum class MainRoute(
     val title: StringResource,
     val selectedIcon: ImageVector,
-    val icon: ImageVector
+    val icon: ImageVector,
+    val route: String
 ) {
     MOVIES(
         title = Res.string.movies,
         selectedIcon = Icons.Rounded.Home,
-        icon = Icons.Outlined.Home
+        icon = Icons.Outlined.Home,
+        route = "main/movies"
     ),
     TV_SHOWS(
         title = Res.string.tv_shows,
         selectedIcon = Icons.Rounded.LiveTv,
-        icon = Icons.Outlined.LiveTv
+        icon = Icons.Outlined.LiveTv,
+        route = "main/tv"
     ),
     SEARCH(
         title = Res.string.search,
         selectedIcon = Icons.Rounded.Search,
-        icon = Icons.Outlined.Search
+        icon = Icons.Outlined.Search,
+        route = "main/search"
     ),
     YOU(
         title = Res.string.you,
         selectedIcon = Icons.Rounded.Person,
-        icon = Icons.Outlined.Person
+        icon = Icons.Outlined.Person,
+        route = "main/you"
     )
 }

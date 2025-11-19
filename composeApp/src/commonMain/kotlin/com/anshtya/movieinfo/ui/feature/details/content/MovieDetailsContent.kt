@@ -10,6 +10,7 @@ import com.anshtya.movieinfo.common.data.model.LibraryItem
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.details.MovieDetails
 import com.anshtya.movieinfo.common.data.model.details.asLibraryItem
+import com.anshtya.movieinfo.ui.feature.details.DetailsUiState
 import movieinfo.composeapp.generated.resources.Res
 import movieinfo.composeapp.generated.resources.budget
 import movieinfo.composeapp.generated.resources.original_language
@@ -21,17 +22,20 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun MovieDetailsContent(
+    uiState: DetailsUiState,
     movieDetails: MovieDetails,
-    isFavorite: Boolean,
-    isAddedToWatchList: Boolean,
     onFavoriteClick: (LibraryItem) -> Unit,
     onWatchlistClick: (LibraryItem) -> Unit,
-    onCastClick: (String) -> Unit,
-    onRecommendationClick: (String) -> Unit,
+    onCastClick: (Int, MediaType) -> Unit,
+    onRecommendationClick: (Int, MediaType) -> Unit,
     onSeeAllCastClick: () -> Unit,
-    onBackdropCollapse: (Boolean) -> Unit,
+    onHideBottomSheet: () -> Unit,
+    onSignInClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     MediaDetailsContent(
+        uiState = uiState,
         backdropPath = movieDetails.backdropPath,
         voteCount = movieDetails.voteCount,
         name = movieDetails.title,
@@ -43,16 +47,17 @@ internal fun MovieDetailsContent(
         overview = movieDetails.overview,
         cast = movieDetails.credits.cast.take(10),
         recommendations = movieDetails.recommendations,
-        isFavorite = isFavorite,
-        isAddedToWatchList = isAddedToWatchList,
         onFavoriteClick = { onFavoriteClick(movieDetails.asLibraryItem()) },
         onWatchlistClick = { onWatchlistClick(movieDetails.asLibraryItem()) },
         onSeeAllCastClick = onSeeAllCastClick,
         onCastClick = onCastClick,
-        onRecommendationClick = { id ->
-            onRecommendationClick("${id},${MediaType.MOVIE}")
+        onRecommendationClick = {
+            onRecommendationClick(it, MediaType.MOVIE)
         },
-        onBackdropCollapse = onBackdropCollapse
+        onHideBottomSheet = onHideBottomSheet,
+        onSignInClick = onSignInClick,
+        onBackClick = onBackClick,
+        modifier = modifier
     ) {
         MovieDetailsSection(
             releaseDate = movieDetails.releaseDate,

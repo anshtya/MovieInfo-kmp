@@ -11,11 +11,17 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -25,17 +31,26 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberBottomSheetScaffoldState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -49,6 +64,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
@@ -59,36 +76,39 @@ import androidx.compose.ui.unit.dp
 import com.anshtya.movieinfo.common.data.model.Content
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.people.Cast
+import com.anshtya.movieinfo.ui.component.AnimatedText
 import com.anshtya.movieinfo.ui.component.ContentSectionHeader
 import com.anshtya.movieinfo.ui.component.LazyRowContentSection
 import com.anshtya.movieinfo.ui.component.LibraryActionButton
 import com.anshtya.movieinfo.ui.component.MediaItemCard
 import com.anshtya.movieinfo.ui.component.Rating
 import com.anshtya.movieinfo.ui.component.TmdbImage
+import com.anshtya.movieinfo.ui.component.TopAppBarWithBackButton
 import com.anshtya.movieinfo.ui.component.noRippleClickable
-import com.anshtya.movieinfo.ui.feature.details.OverviewSection
+import com.anshtya.movieinfo.ui.feature.details.DetailsUiState
 import com.anshtya.movieinfo.ui.feature.details.horizontalPadding
 import com.anshtya.movieinfo.ui.feature.details.verticalPadding
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 import movieinfo.composeapp.generated.resources.Res
 import movieinfo.composeapp.generated.resources.add_to_favorites
 import movieinfo.composeapp.generated.resources.add_to_watchlist
+import movieinfo.composeapp.generated.resources.details_sign_in_sheet
 import movieinfo.composeapp.generated.resources.not_available
 import movieinfo.composeapp.generated.resources.recommendations
 import movieinfo.composeapp.generated.resources.remove_from_favorites
 import movieinfo.composeapp.generated.resources.remove_from_watchlist
+import movieinfo.composeapp.generated.resources.sign_in
+import movieinfo.composeapp.generated.resources.sign_in_sheet_text
 import movieinfo.composeapp.generated.resources.top_billed_cast
 import movieinfo.composeapp.generated.resources.view_all
 import org.jetbrains.compose.resources.stringResource
 
-private val backdropExpandedHeight = 220.dp
-private val collapsedHeight = 64.dp
-private val heightToCollapse = backdropExpandedHeight - collapsedHeight
-
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun MediaDetailsContent(
+    uiState: DetailsUiState,
     backdropPath: String,
     voteCount: Int,
     name: String,
@@ -100,21 +120,36 @@ internal fun MediaDetailsContent(
     overview: String,
     cast: List<Cast>,
     recommendations: List<Content>,
-    isFavorite: Boolean,
-    isAddedToWatchList: Boolean,
     onFavoriteClick: () -> Unit,
     onWatchlistClick: () -> Unit,
     onSeeAllCastClick: () -> Unit,
-    onCastClick: (String) -> Unit,
-    onRecommendationClick: (String) -> Unit,
-    onBackdropCollapse: (Boolean) -> Unit,
+    onCastClick: (Int, MediaType) -> Unit,
+    onRecommendationClick: (Int) -> Unit,
+    onHideBottomSheet: () -> Unit,
+    onSignInClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val heightToCollapsePx = with(LocalDensity.current) { heightToCollapse.toPx() }
+    val scope = rememberCoroutineScope()
+    val bottomSheetState = rememberModalBottomSheetState()
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = bottomSheetState
+    )
+    LaunchedEffect(uiState.showSignInSheet) {
+        if (uiState.showSignInSheet) {
+            scaffoldState.bottomSheetState.expand()
+        }
+    }
 
+    val backdropExpandedHeight = 220.dp
+    val collapsedHeight = TopAppBarDefaults.TopAppBarExpandedHeight +
+            WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val heightToCollapse = backdropExpandedHeight - collapsedHeight
+
+    val heightToCollapsePx = with(LocalDensity.current) { heightToCollapse.toPx() }
     // persist collapse offset between different Details screen
     var savedCollapseOffsetPx by rememberSaveable { mutableFloatStateOf(0f) }
-
     val nestedScrollConnection = remember(heightToCollapsePx) {
         ExitOnlyCollapseNestedConnection(heightToCollapsePx)
     }
@@ -137,69 +172,126 @@ internal fun MediaDetailsContent(
     val isBackdropCollapsed by remember(backdropHeight) {
         derivedStateOf { backdropHeight == collapsedHeight }
     }
-    LaunchedEffect(isBackdropCollapsed) {
-        onBackdropCollapse(isBackdropCollapsed)
-    }
-
     val scrollValue = 1 - ((backdropExpandedHeight - backdropHeight) / heightToCollapse)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .nestedScroll(nestedScrollConnection)
-    ) {
-        BackdropImageSection(
-            path = backdropPath,
-            scrollValue = scrollValue,
-            modifier = Modifier.height(backdropHeight)
-        )
-        LazyColumn(
-            contentPadding = PaddingValues(
-                horizontal = horizontalPadding,
-                vertical = verticalPadding
-            ),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = Modifier.fillMaxWidth()
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+            val signInSheetContentDescription = stringResource(
+                Res.string.details_sign_in_sheet
+            )
+            if (uiState.showSignInSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = onHideBottomSheet,
+                    sheetState = bottomSheetState,
+                    modifier = Modifier.semantics {
+                        contentDescription = signInSheetContentDescription
+                    }
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(50.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = horizontalPadding, vertical = verticalPadding)
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.sign_in_sheet_text),
+                            style = MaterialTheme.typography.bodyLarge
+                        )
+                        Button(
+                            onClick = {
+                                scope.launch {
+                                    scaffoldState.bottomSheetState.hide()
+                                }.invokeOnCompletion {
+                                    onHideBottomSheet()
+                                }
+                                onSignInClick()
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(56.dp)
+                        ) {
+                            Text(text = stringResource(Res.string.sign_in))
+                        }
+                    }
+                }
+            }
+        },
+        sheetPeekHeight = 0.dp,
+        modifier = modifier
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .consumeWindowInsets(paddingValues)
+                .fillMaxWidth()
+                .nestedScroll(nestedScrollConnection)
         ) {
-            item {
-                InfoSection(
-                    voteCount = voteCount,
-                    name = name,
-                    rating = rating,
-                    releaseYear = releaseYear,
-                    runtime = runtime,
-                    tagline = tagline
+            Box(Modifier.fillMaxWidth()) {
+                BackdropImageSection(
+                    path = backdropPath,
+                    scrollValue = scrollValue,
+                    modifier = Modifier.height(backdropHeight)
+                )
+                DetailsTopAppBar(
+                    showTitle = isBackdropCollapsed,
+                    title = name,
+                    onBackClick = onBackClick,
+                    modifier = Modifier.statusBarsPadding()
                 )
             }
+            LazyColumn(
+                contentPadding = PaddingValues(horizontal = horizontalPadding),
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                item {
+                    InfoSection(
+                        voteCount = voteCount,
+                        name = name,
+                        rating = rating,
+                        releaseYear = releaseYear,
+                        runtime = runtime,
+                        tagline = tagline
+                    )
+                }
 
-            item { GenreSection(genres) }
+                item { GenreSection(genres) }
 
-            item {
-                LibraryActions(
-                    isFavorite = isFavorite,
-                    isAddedToWatchList = isAddedToWatchList,
-                    onFavoriteClick = onFavoriteClick,
-                    onWatchlistClick = onWatchlistClick
-                )
-            }
+                item {
+                    LibraryActions(
+                        isFavorite = uiState.markedFavorite,
+                        isAddedToWatchList = uiState.savedInWatchlist,
+                        onFavoriteClick = onFavoriteClick,
+                        onWatchlistClick = onWatchlistClick
+                    )
+                }
 
-            item {
-                TopBilledCast(
-                    cast = cast,
-                    onCastClick = onCastClick,
-                    onSeeAllCastClick = onSeeAllCastClick
-                )
-            }
+                item {
+                    TopBilledCast(
+                        cast = cast,
+                        onCastClick = onCastClick,
+                        onSeeAllCastClick = onSeeAllCastClick
+                    )
+                }
 
-            item { OverviewSection(overview) }
+                item { OverviewSection(overview) }
 
-            item { content() }
+                item { content() }
 
-            item {
-                Recommendations(
-                    recommendations = recommendations,
-                    onRecommendationClick = onRecommendationClick
-                )
+                item {
+                    Recommendations(
+                        recommendations = recommendations,
+                        onRecommendationClick = onRecommendationClick
+                    )
+                }
+                item {
+                    Box(
+                        modifier = Modifier
+                        .navigationBarsPadding()
+                        .height(10.dp)
+                    )
+                }
             }
         }
     }
@@ -245,6 +337,33 @@ private class ExitOnlyCollapseNestedConnection(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DetailsTopAppBar(
+    showTitle: Boolean,
+    title: String,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    TopAppBarWithBackButton(
+        title = {
+            AnimatedText(
+                text = title,
+                visible = showTitle
+            )
+        },
+        topAppBarColors = TopAppBarDefaults.topAppBarColors(
+            containerColor = Color.Transparent
+        ),
+        iconButtonColors = IconButtonDefaults.iconButtonColors(
+            containerColor = Color.Black.copy(alpha = 0.5f),
+            contentColor = Color.White
+        ),
+        onBackClick = onBackClick,
+        modifier = modifier
+    )
+}
+
 @Composable
 internal fun DetailItem(
     fieldName: String,
@@ -287,7 +406,9 @@ private fun InfoSection(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(2.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp)
     ) {
         Text(
             text = name,
@@ -341,7 +462,7 @@ private fun GenreSection(
 @Composable
 private fun TopBilledCast(
     cast: List<Cast>,
-    onCastClick: (String) -> Unit,
+    onCastClick: (Int, MediaType) -> Unit,
     onSeeAllCastClick: () -> Unit,
 ) {
     Column(
@@ -390,7 +511,7 @@ private fun TopBilledCast(
 @Composable
 private fun Recommendations(
     recommendations: List<Content>,
-    onRecommendationClick: (String) -> Unit
+    onRecommendationClick: (Int) -> Unit
 ) {
     LazyRowContentSection(
         pagingEnabled = false,
@@ -418,7 +539,7 @@ private fun Recommendations(
                 ) {
                     MediaItemCard(
                         posterPath = it.imagePath,
-                        onItemClick = { onRecommendationClick("${it.id}") }
+                        onItemClick = { onRecommendationClick(it.id) }
                     )
                 }
             }
@@ -433,7 +554,7 @@ private fun CastItem(
     imagePath: String,
     name: String,
     characterName: String,
-    onItemClick: (String) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -444,7 +565,7 @@ private fun CastItem(
                 .fillMaxHeight()
                 .width(130.dp)
                 .noRippleClickable {
-                    onItemClick("${id},${MediaType.PERSON}")
+                    onItemClick(id, MediaType.PERSON)
                 }
         ) {
             TmdbImage(
@@ -452,9 +573,9 @@ private fun CastItem(
                 imageUrl = imagePath,
                 modifier = modifier
                     .height(140.dp)
-                    .noRippleClickable {
-                        onItemClick("${id},${MediaType.PERSON}")
-                    }
+//                    .noRippleClickable {
+//                        onItemClick(id, MediaType.PERSON)
+//                    }
             )
             Spacer(Modifier.height(4.dp))
             Column(

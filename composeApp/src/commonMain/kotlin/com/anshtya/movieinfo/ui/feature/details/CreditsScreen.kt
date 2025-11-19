@@ -1,10 +1,13 @@
 package com.anshtya.movieinfo.ui.feature.details
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.common.data.model.MediaType
@@ -36,7 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun CreditsRoute(
-    onItemClick: (String) -> Unit,
+    onNavigateToItem: (Int, MediaType) -> Unit,
     onBackClick: () -> Unit,
     viewModel: DetailsViewModel
 ) {
@@ -44,7 +48,7 @@ internal fun CreditsRoute(
 
     CreditsScreen(
         details = details,
-        onItemClick = onItemClick,
+        onItemClick = onNavigateToItem,
         onBackClick = onBackClick
     )
 }
@@ -53,7 +57,7 @@ internal fun CreditsRoute(
 @Composable
 private fun CreditsScreen(
     details: ContentDetailUiState,
-    onItemClick: (String) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     onBackClick: () -> Unit
 ) {
     Scaffold(
@@ -69,24 +73,26 @@ private fun CreditsScreen(
             )
         }
     ) { paddingValues ->
-        Box(Modifier.padding(paddingValues)) {
-            when (details) {
-                is ContentDetailUiState.Movie -> {
-                    CreditsLazyColumn(
-                        credits = details.data.credits,
-                        onItemClick = onItemClick
-                    )
-                }
-
-                is ContentDetailUiState.TvSeries -> {
-                    CreditsLazyColumn(
-                        credits = details.data.credits,
-                        onItemClick = onItemClick
-                    )
-                }
-
-                else -> Unit
+        when (details) {
+            is ContentDetailUiState.Movie -> {
+                CreditsLazyColumn(
+                    credits = details.data.credits,
+                    contentPadding = paddingValues,
+                    onItemClick = onItemClick,
+                    modifier = Modifier.consumeWindowInsets(paddingValues)
+                )
             }
+
+            is ContentDetailUiState.TvSeries -> {
+                CreditsLazyColumn(
+                    credits = details.data.credits,
+                    contentPadding = paddingValues,
+                    onItemClick = onItemClick,
+                    modifier = Modifier.consumeWindowInsets(paddingValues)
+                )
+            }
+
+            else -> {}
         }
     }
 }
@@ -94,12 +100,18 @@ private fun CreditsScreen(
 @Composable
 private fun CreditsLazyColumn(
     credits: Credits,
-    onItemClick: (String) -> Unit
+    contentPadding: PaddingValues,
+    onItemClick: (Int, MediaType) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 2.dp)
+        contentPadding = PaddingValues(
+            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+            top = contentPadding.calculateTopPadding() + 2.dp,
+            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+            bottom = contentPadding.calculateBottomPadding() + 2.dp,
+        ),
+        modifier = modifier.fillMaxWidth()
     ) {
         stickyHeader {
             CategoryHeader(stringResource(Res.string.cast))
@@ -113,7 +125,7 @@ private fun CreditsLazyColumn(
                 role = it.character,
                 imagePath = it.profilePath,
                 onItemClick = {
-                    onItemClick("${it.id},${MediaType.PERSON}")
+                    onItemClick(it.id, MediaType.PERSON)
                 }
             )
         }
@@ -137,7 +149,7 @@ private fun CreditsLazyColumn(
                         role = it.job,
                         imagePath = it.profilePath,
                         onItemClick = {
-                            onItemClick("${it.id},${MediaType.PERSON}")
+                            onItemClick(it.id, MediaType.PERSON)
                         }
                     )
                 }

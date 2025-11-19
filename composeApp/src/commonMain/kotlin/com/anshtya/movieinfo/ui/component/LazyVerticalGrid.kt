@@ -3,7 +3,6 @@ package com.anshtya.movieinfo.ui.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridScope
@@ -27,6 +26,7 @@ fun LazyVerticalContentGrid(
     appendItems: () -> Unit = {},
     pagingEnabled: Boolean,
     contentPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     content: LazyGridScope.() -> Unit
 ) {
     val lazyGridState = rememberLazyGridState()
@@ -44,7 +44,7 @@ fun LazyVerticalContentGrid(
 
                     val isLastItemReached = lastVisibleItem.index + 1 == layoutInfo.totalItemsCount
                     val isLastItemDisplayed =
-                        lastVisibleItem.offset.y + lastVisibleItem.size.height <= viewPortHeight
+                        lastVisibleItem.offset.y + lastVisibleItem.size.height >= viewPortHeight
 
                     (isLastItemReached && isLastItemDisplayed)
                 }
@@ -57,19 +57,20 @@ fun LazyVerticalContentGrid(
         }
     }
 
-    Box(Modifier.fillMaxWidth()) {
-        if (itemsEmpty && isLoading) {
+
+    if (itemsEmpty && isLoading) {
+        Box(modifier.fillMaxWidth()) {
             CircularProgressIndicator(Modifier.align(Alignment.Center))
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                contentPadding = contentPadding,
-                state = lazyGridState,
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
-                modifier = Modifier.fillMaxSize(),
-                content = content
-            )
         }
+    } else {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
+            contentPadding = contentPadding,
+            state = lazyGridState,
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = modifier,
+            content = content
+        )
     }
 }

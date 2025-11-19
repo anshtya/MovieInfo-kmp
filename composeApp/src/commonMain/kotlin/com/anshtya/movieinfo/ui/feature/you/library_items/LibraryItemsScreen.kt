@@ -5,9 +5,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.exclude
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.items
@@ -20,6 +25,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -38,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.common.data.model.LibraryItem
 import com.anshtya.movieinfo.common.data.model.LibraryType
+import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.ui.component.LazyVerticalContentGrid
 import com.anshtya.movieinfo.ui.component.MediaItemCard
 import com.anshtya.movieinfo.ui.component.TopAppBarWithBackButton
@@ -53,18 +60,17 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun LibraryItemsRoute(
     onBackClick: () -> Unit,
-    navigateToDetails: (String) -> Unit,
+    navigateToDetails: (Int, MediaType) -> Unit,
     viewModel: LibraryItemsViewModel = koinViewModel()
 ) {
     val movieItems by viewModel.movieItems.collectAsStateWithLifecycle()
     val tvItems by viewModel.tvItems.collectAsStateWithLifecycle()
-    val libraryItemType by viewModel.libraryType.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
 
     LibraryItemsScreen(
         movieItems = movieItems,
         tvItems = tvItems,
-        libraryType = libraryItemType,
+        libraryType = viewModel.libraryType,
         errorMessage = errorMessage,
         onDeleteItem = viewModel::deleteItem,
         onBackClick = onBackClick,
@@ -81,7 +87,7 @@ internal fun LibraryItemsScreen(
     libraryType: LibraryType?,
     errorMessage: String?,
     onDeleteItem: (LibraryItem) -> Unit,
-    onItemClick: (String) -> Unit,
+    onItemClick: (Int, MediaType) -> Unit,
     onBackClick: () -> Unit,
     onErrorShown: () -> Unit
 ) {
@@ -108,12 +114,16 @@ internal fun LibraryItemsScreen(
                 onBackClick = onBackClick
             )
         },
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        contentWindowInsets = ScaffoldDefaults
+            .contentWindowInsets
+            .exclude(WindowInsets.navigationBars)
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .fillMaxSize()
         ) {
             val libraryMediaTabs = LibraryMediaType.entries
             val pagerState = rememberPagerState(pageCount = { libraryMediaTabs.size })
@@ -143,25 +153,23 @@ internal fun LibraryItemsScreen(
 
             HorizontalPager(
                 state = pagerState,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
             ) { page ->
-                Column(Modifier.fillMaxSize()) {
-                    when (libraryMediaTabs[page]) {
-                        LibraryMediaType.MOVIE -> {
-                            LibraryContent(
-                                content = movieItems,
-                                onItemClick = onItemClick,
-                                onDeleteClick = onDeleteItem
-                            )
-                        }
+                when (libraryMediaTabs[page]) {
+                    LibraryMediaType.MOVIE -> {
+                        LibraryContent(
+                            content = movieItems,
+                            onItemClick = onItemClick,
+                            onDeleteClick = onDeleteItem
+                        )
+                    }
 
-                        LibraryMediaType.TV -> {
-                            LibraryContent(
-                                content = tvItems,
-                                onItemClick = onItemClick,
-                                onDeleteClick = onDeleteItem
-                            )
-                        }
+                    LibraryMediaType.TV -> {
+                        LibraryContent(
+                            content = tvItems,
+                            onItemClick = onItemClick,
+                            onDeleteClick = onDeleteItem
+                        )
                     }
                 }
             }
@@ -172,33 +180,44 @@ internal fun LibraryItemsScreen(
 @Composable
 private fun LibraryContent(
     content: List<LibraryItem>,
-    onItemClick: (String) -> Unit,
-    onDeleteClick: (LibraryItem) -> Unit
+    onItemClick: (Int, MediaType) -> Unit,
+    onDeleteClick: (LibraryItem) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    Box(Modifier.fillMaxSize()) {
-        if (content.isEmpty()) {
+    if (content.isEmpty()) {
+        Box(modifier.fillMaxSize()) {
             Text(
                 text = stringResource(Res.string.no_items),
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.align(Alignment.Center)
             )
-        } else {
-            LazyVerticalContentGrid(
-                pagingEnabled = false,
-                contentPadding = PaddingValues(horizontal = 10.dp)
+        }
+    } else {
+        LazyVerticalContentGrid(
+            pagingEnabled = false,
+            contentPadding = PaddingValues(
+                start = 10.dp,
+                end = 10.dp,
+                top = 8.dp,
+                bottom = WindowInsets.navigationBars
+                    .asPaddingValues().calculateBottomPadding() + 4.dp
+            ),
+            modifier = modifier.fillMaxSize()
+        ) {
+            items(
+                items = content,
+                key = { it.id }
             ) {
-                items(
-                    items = content,
-                    key = { it.id }
-                ) {
-                    LibraryItem(
-                        posterPath = it.imagePath,
-                        onItemClick = {
-                            onItemClick("${it.id},${it.mediaType.uppercase()}")
-                        },
-                        onDeleteClick = { onDeleteClick(it) }
-                    )
-                }
+                LibraryItem(
+                    posterPath = it.imagePath,
+                    onItemClick = {
+                        onItemClick(
+                            it.id,
+                            enumValueOf<MediaType>(it.mediaType.uppercase())
+                        )
+                    },
+                    onDeleteClick = { onDeleteClick(it) }
+                )
             }
         }
     }

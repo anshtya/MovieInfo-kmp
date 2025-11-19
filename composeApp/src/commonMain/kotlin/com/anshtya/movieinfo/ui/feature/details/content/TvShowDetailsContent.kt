@@ -10,6 +10,7 @@ import com.anshtya.movieinfo.common.data.model.LibraryItem
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.details.tv.TvSeriesDetails
 import com.anshtya.movieinfo.common.data.model.details.tv.asLibraryItem
+import com.anshtya.movieinfo.ui.feature.details.DetailsUiState
 import movieinfo.composeapp.generated.resources.Res
 import movieinfo.composeapp.generated.resources.first_air_date
 import movieinfo.composeapp.generated.resources.in_production
@@ -26,17 +27,20 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun TvShowDetailsContent(
+    uiState: DetailsUiState,
     tvSeriesDetails: TvSeriesDetails,
-    isFavorite: Boolean,
-    isAddedToWatchList: Boolean,
     onFavoriteClick: (LibraryItem) -> Unit,
     onWatchlistClick: (LibraryItem) -> Unit,
     onSeeAllCastClick: () -> Unit,
-    onCastClick: (String) -> Unit,
-    onRecommendationClick: (String) -> Unit,
-    onBackdropCollapse: (Boolean) -> Unit,
+    onCastClick: (Int, MediaType) -> Unit,
+    onRecommendationClick: (Int, MediaType) -> Unit,
+    onHideBottomSheet: () -> Unit,
+    onSignInClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     MediaDetailsContent(
+        uiState = uiState,
         backdropPath = tvSeriesDetails.backdropPath,
         voteCount = tvSeriesDetails.voteCount,
         name = tvSeriesDetails.name,
@@ -48,16 +52,17 @@ internal fun TvShowDetailsContent(
         overview = tvSeriesDetails.overview,
         cast = tvSeriesDetails.credits.cast.take(10),
         recommendations = tvSeriesDetails.recommendations,
-        isFavorite = isFavorite,
-        isAddedToWatchList = isAddedToWatchList,
         onFavoriteClick = { onFavoriteClick(tvSeriesDetails.asLibraryItem()) },
         onWatchlistClick = { onWatchlistClick(tvSeriesDetails.asLibraryItem()) },
         onSeeAllCastClick = onSeeAllCastClick,
         onCastClick = onCastClick,
-        onRecommendationClick = { id ->
-            onRecommendationClick("${id},${MediaType.TV}")
+        onRecommendationClick = {
+            onRecommendationClick(it, MediaType.TV)
         },
-        onBackdropCollapse = onBackdropCollapse
+        onHideBottomSheet = onHideBottomSheet,
+        onSignInClick = onSignInClick,
+        onBackClick = onBackClick,
+        modifier = modifier
     ) {
         TvDetailsSection(
             originalLanguage = tvSeriesDetails.originalLanguage,

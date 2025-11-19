@@ -5,59 +5,63 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.anshtya.movieinfo.common.data.model.MediaType
+import kotlinx.serialization.Serializable
 import org.koin.compose.viewmodel.koinViewModel
 
-private const val detailsNavigationRoute = "details"
-private const val creditsNavigationRoute = "credits"
-internal const val idNavigationArgument = "id"
-private const val detailsNavigationRouteWithArg = "$detailsNavigationRoute/{$idNavigationArgument}"
+@Serializable
+data class Details(
+    val id: Int,
+    val type: MediaType
+)
+
+private sealed interface DetailsGraph {
+    @Serializable
+    data object Details : DetailsGraph
+
+    @Serializable
+    data object Credits : DetailsGraph
+}
 
 fun NavGraphBuilder.detailsScreen(
     navController: NavController,
     navigateToAuth: () -> Unit
 ) {
-    navigation(
-        route = detailsNavigationRouteWithArg,
-        startDestination = detailsNavigationRoute
+    navigation<Details>(
+        startDestination = DetailsGraph.Details
     ) {
-        composable(
-            route = detailsNavigationRoute
-        ) { backStackEntry ->
+        composable<DetailsGraph.Details> { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(detailsNavigationRouteWithArg)
+                navController.getBackStackEntry<Details>()
             }
             val viewModel = koinViewModel<DetailsViewModel>(viewModelStoreOwner = parentEntry)
 
             DetailsRoute(
                 onBackClick = navController::navigateUp,
-                onItemClick = navController::navigateToDetails,
-                onSeeAllCastClick = navController::navigateToCredits,
+                onNavigateToItem = { id, type ->
+                    navController.navigate(Details(id, type))
+                },
+                onSeeAllCastClick = {
+                    navController.navigate(DetailsGraph.Credits)
+                },
                 navigateToAuth = navigateToAuth,
                 viewModel = viewModel
             )
         }
 
-        composable(
-            route = creditsNavigationRoute
-        ) { backStackEntry ->
+        composable<DetailsGraph.Credits> { backStackEntry ->
             val parentEntry = remember(backStackEntry) {
-                navController.getBackStackEntry(detailsNavigationRouteWithArg)
+                navController.getBackStackEntry<Details>()
             }
             val viewModel = koinViewModel<DetailsViewModel>(viewModelStoreOwner = parentEntry)
 
             CreditsRoute(
                 viewModel = viewModel,
-                onItemClick = navController::navigateToDetails,
+                onNavigateToItem = { id, type ->
+                    navController.navigate(Details(id, type))
+                },
                 onBackClick = navController::navigateUp
             )
         }
     }
-}
-
-fun NavController.navigateToDetails(id: String) {
-    navigate("$detailsNavigationRoute/$id")
-}
-
-private fun NavController.navigateToCredits() {
-    navigate(creditsNavigationRoute)
 }

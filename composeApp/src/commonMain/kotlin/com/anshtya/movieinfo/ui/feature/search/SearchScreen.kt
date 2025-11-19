@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,13 +20,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.backhandler.BackHandler
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.SearchItem
+import com.anshtya.movieinfo.ui.component.MediaItemCard
 import com.anshtya.movieinfo.ui.component.MovieInfoSearchBar
+import com.anshtya.movieinfo.ui.component.noRippleClickable
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -33,7 +41,8 @@ private val horizontalPadding = 8.dp
 
 @Composable
 internal fun SearchRoute(
-    navigateToDetail: (String) -> Unit,
+    navigateToDetail: (Int, MediaType) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: SearchViewModel = koinViewModel()
 ) {
     val searchQuery by viewModel.searchQuery.collectAsStateWithLifecycle()
@@ -47,7 +56,8 @@ internal fun SearchRoute(
         onSearchQueryChange = viewModel::changeSearchQuery,
         onBack = viewModel::onBack,
         onSearchResultClick = navigateToDetail,
-        onErrorShown = viewModel::onErrorShown
+        onErrorShown = viewModel::onErrorShown,
+        modifier = modifier
     )
 }
 
@@ -59,8 +69,9 @@ internal fun SearchScreen(
     searchSuggestions: List<SearchItem>,
     onSearchQueryChange: (String) -> Unit,
     onBack: () -> Unit,
-    onSearchResultClick: (String) -> Unit,
-    onErrorShown: () -> Unit
+    onSearchResultClick: (Int, MediaType) -> Unit,
+    onErrorShown: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -73,12 +84,14 @@ internal fun SearchScreen(
     Scaffold(
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState)
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
         Column(
             modifier = Modifier
-                .fillMaxSize()
                 .padding(paddingValues)
+                .consumeWindowInsets(paddingValues)
+                .fillMaxSize()
         ) {
             MovieInfoSearchBar(
                 value = searchQuery,
@@ -107,7 +120,10 @@ internal fun SearchScreen(
                             imagePath = it.imagePath,
                             onItemClick = {
                                 // Converting type to uppercase for [MediaType]
-                                onSearchResultClick("${it.id},${it.mediaType.uppercase()}")
+                                onSearchResultClick(
+                                    it.id,
+                                    enumValueOf<MediaType>(it.mediaType.uppercase())
+                                )
                             }
                         )
                     }
@@ -115,6 +131,31 @@ internal fun SearchScreen(
             }
             SearchHistoryContent(history = listOf())
         }
+    }
+}
+
+@Composable
+private fun SearchSuggestionItem(
+    name: String,
+    imagePath: String,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier.noRippleClickable { onItemClick() }
+    ) {
+        MediaItemCard(
+            posterPath = imagePath,
+            onItemClick = onItemClick
+        )
+        Text(
+            text = name,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center
+        )
     }
 }
 

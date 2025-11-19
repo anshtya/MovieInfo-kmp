@@ -3,6 +3,8 @@ package com.anshtya.movieinfo.ui.feature.movies
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,8 +22,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.anshtya.movieinfo.common.data.model.FeedType
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
 import com.anshtya.movieinfo.ui.component.ContentSectionHeader
@@ -34,14 +38,16 @@ import movieinfo.composeapp.generated.resources.popular
 import movieinfo.composeapp.generated.resources.top_rated
 import movieinfo.composeapp.generated.resources.upcoming
 import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 private val horizontalPadding = 8.dp
 
 @Composable
-internal fun FeedRoute(
-    navigateToDetails: (String) -> Unit,
-    navigateToItems: (String) -> Unit,
-    viewModel: MoviesViewModel
+internal fun MoviesFeedRoute(
+    navigateToDetails: (Int, MediaType) -> Unit,
+    navigateToItems: (FeedType, String) -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MoviesViewModel = koinViewModel()
 ) {
     val nowPlayingMovies by viewModel.nowPlayingMovies.collectAsStateWithLifecycle()
     val popularMovies by viewModel.popularMovies.collectAsStateWithLifecycle()
@@ -49,7 +55,7 @@ internal fun FeedRoute(
     val upcomingMovies by viewModel.upcomingMovies.collectAsStateWithLifecycle()
     val errorMessage by viewModel.errorMessage.collectAsStateWithLifecycle()
 
-    FeedScreen(
+    MoviesFeedScreen(
         nowPlayingMovies = nowPlayingMovies,
         popularMovies = popularMovies,
         topRatedMovies = topRatedMovies,
@@ -58,21 +64,23 @@ internal fun FeedRoute(
         appendItems = viewModel::appendItems,
         onItemClick = navigateToDetails,
         onSeeAllClick = navigateToItems,
-        onErrorShown = viewModel::onErrorShown
+        onErrorShown = viewModel::onErrorShown,
+        modifier = modifier
     )
 }
 
 @Composable
-internal fun FeedScreen(
+internal fun MoviesFeedScreen(
     nowPlayingMovies: ContentUiState,
     popularMovies: ContentUiState,
     topRatedMovies: ContentUiState,
     upcomingMovies: ContentUiState,
     errorMessage: String?,
     appendItems: (MovieListCategory) -> Unit,
-    onItemClick: (String) -> Unit,
-    onSeeAllClick: (String) -> Unit,
-    onErrorShown: () -> Unit
+    onItemClick: (Int, MediaType) -> Unit,
+    onSeeAllClick: (FeedType, String) -> Unit,
+    onErrorShown: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val snackbarState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -83,13 +91,17 @@ internal fun FeedScreen(
     }
 
     Scaffold(
-        snackbarHost = { SnackbarHost(hostState = snackbarState) }
+        snackbarHost = { SnackbarHost(hostState = snackbarState) },
+        modifier = modifier
     ) { paddingValues ->
         LazyColumn(
-            contentPadding = PaddingValues(top = 4.dp, bottom = 8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues),
+            contentPadding = PaddingValues(
+                top = paddingValues.calculateTopPadding() + 8.dp,
+                bottom = paddingValues.calculateBottomPadding() + 8.dp,
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr)
+            ),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item {
@@ -137,8 +149,8 @@ private fun ContentSection(
     content: ContentUiState,
     sectionName: String,
     appendItems: (MovieListCategory) -> Unit,
-    onItemClick: (String) -> Unit,
-    onSeeAllClick: (String) -> Unit
+    onItemClick: (Int, MediaType) -> Unit,
+    onSeeAllClick: (FeedType, String) -> Unit
 ) {
     LazyRowContentSection(
         pagingEnabled = true,
@@ -150,7 +162,7 @@ private fun ContentSection(
         sectionHeaderContent = {
             ContentSectionHeader(
                 sectionName = sectionName,
-                onSeeAllClick = { onSeeAllClick(content.category.name) },
+                onSeeAllClick = { onSeeAllClick(FeedType.MOVIE, content.category.name) },
                 modifier = Modifier.padding(horizontal = horizontalPadding)
             )
         },
@@ -162,7 +174,7 @@ private fun ContentSection(
                 MediaItemCard(
                     posterPath = it.imagePath,
                     onItemClick = {
-                        onItemClick("${it.id},${MediaType.MOVIE}")
+                        onItemClick(it.id, MediaType.MOVIE)
                     }
                 )
             }

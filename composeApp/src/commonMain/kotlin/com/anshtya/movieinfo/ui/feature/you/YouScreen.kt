@@ -85,7 +85,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 internal fun YouRoute(
     navigateToAuth: () -> Unit,
-    navigateToLibraryItem: (String) -> Unit,
+    navigateToLibraryItem: (LibraryType) -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: YouViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -103,7 +104,8 @@ internal fun YouRoute(
         onReloadAccountDetailsClick = viewModel::getAccountDetails,
         onRefresh = viewModel::onRefresh,
         onLogOutClick = viewModel::logOut,
-        onErrorShown = viewModel::onErrorShown
+        onErrorShown = viewModel::onErrorShown,
+        modifier = modifier
     )
 }
 
@@ -117,11 +119,12 @@ internal fun YouScreen(
     onChangeDarkMode: (SelectedDarkMode) -> Unit,
     onChangeIncludeAdult: (Boolean) -> Unit,
     onNavigateToAuth: () -> Unit,
-    onLibraryItemClick: (String) -> Unit,
+    onLibraryItemClick: (LibraryType) -> Unit,
     onReloadAccountDetailsClick: () -> Unit,
     onLogOutClick: () -> Unit,
     onRefresh: () -> Unit,
-    onErrorShown: () -> Unit
+    onErrorShown: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -138,14 +141,16 @@ internal fun YouScreen(
             onChangeTheme = onChangeTheme,
             onChangeDarkMode = onChangeDarkMode,
             onChangeIncludeAdult = onChangeIncludeAdult,
-            onDismissRequest = { showSettingsDialog = !showSettingsDialog }
+            onDismissRequest = { showSettingsDialog = !showSettingsDialog },
+            modifier = modifier
         )
     }
 
     var showAttributionInfoDialog by rememberSaveable { mutableStateOf(false) }
     if (showAttributionInfoDialog) {
         AttributionInfoDialog(
-            onDismissRequest = { showAttributionInfoDialog = !showAttributionInfoDialog }
+            onDismissRequest = { showAttributionInfoDialog = !showAttributionInfoDialog },
+            modifier = modifier
         )
     }
 
@@ -178,9 +183,14 @@ internal fun YouScreen(
                     }
                 }
             )
-        }
+        },
+        modifier = modifier
     ) { paddingValues ->
-        Box(Modifier.padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
             PullToRefreshBox(
                 isRefreshing = uiState.isRefreshing,
                 onRefresh = onRefresh
@@ -215,7 +225,7 @@ internal fun YouScreen(
 private fun LoggedInView(
     accountDetails: AccountDetails,
     isLoggingOut: Boolean,
-    onLibraryItemClick: (String) -> Unit,
+    onLibraryItemClick: (LibraryType) -> Unit,
     onLogOutClick: () -> Unit
 ) {
     Column(
@@ -312,7 +322,7 @@ private fun LoadAccountDetails(
 
 @Composable
 private fun LibrarySection(
-    onLibraryItemClick: (String) -> Unit
+    onLibraryItemClick: (LibraryType) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -325,11 +335,11 @@ private fun LibrarySection(
         )
         LibraryItemOption(
             optionName = stringResource(Res.string.favorites),
-            onClick = { onLibraryItemClick(LibraryType.FAVORITE.name) }
+            onClick = { onLibraryItemClick(LibraryType.FAVORITE) }
         )
         LibraryItemOption(
             optionName = stringResource(Res.string.watchlist),
-            onClick = { onLibraryItemClick(LibraryType.WATCHLIST.name) }
+            onClick = { onLibraryItemClick(LibraryType.WATCHLIST) }
         )
     }
 }
@@ -355,7 +365,8 @@ private fun LibraryItemOption(
 
 @Composable
 private fun AttributionInfoDialog(
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
@@ -385,7 +396,8 @@ private fun AttributionInfoDialog(
                     textAlign = TextAlign.Center
                 )
             }
-        }
+        },
+        modifier = modifier
     )
 }
 
@@ -395,7 +407,8 @@ private fun SettingsDialog(
     onChangeTheme: (Boolean) -> Unit,
     onChangeDarkMode: (SelectedDarkMode) -> Unit,
     onChangeIncludeAdult: (Boolean) -> Unit,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     userSettings?.let {
         AlertDialog(
@@ -430,6 +443,7 @@ private fun SettingsDialog(
                         .clickable { onDismissRequest() },
                 )
             },
+            modifier = modifier
         )
     }
 }
@@ -533,6 +547,7 @@ private fun SettingsDialogPreview() {
         ),
         onChangeTheme = {},
         onChangeDarkMode = {},
-        onChangeIncludeAdult = {}
-    ) {}
+        onChangeIncludeAdult = {},
+        onDismissRequest = {}
+    )
 }

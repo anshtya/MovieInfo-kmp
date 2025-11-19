@@ -2,10 +2,13 @@ package com.anshtya.movieinfo.ui.feature.details.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,11 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.anshtya.movieinfo.common.data.model.people.PersonDetails
 import com.anshtya.movieinfo.ui.component.MediaItemCard
 import com.anshtya.movieinfo.ui.component.TopAppBarWithBackButton
-import com.anshtya.movieinfo.ui.feature.details.OverviewSection
 import movieinfo.composeapp.generated.resources.Res
 import movieinfo.composeapp.generated.resources.also_known_as
 import movieinfo.composeapp.generated.resources.birth_place
@@ -56,10 +59,14 @@ internal fun PersonDetailsContent(
         modifier = Modifier.nestedScroll(pinnedScrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         LazyColumn(
+            contentPadding = PaddingValues(
+                start = paddingValues.calculateStartPadding(LayoutDirection.Ltr) + 8.dp,
+                top = paddingValues.calculateTopPadding() + 4.dp,
+                end = paddingValues.calculateEndPadding(LayoutDirection.Ltr) + 8.dp,
+                bottom = paddingValues.calculateBottomPadding() + 4.dp,
+            ),
             verticalArrangement = Arrangement.spacedBy(6.dp),
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
+            modifier = modifier.consumeWindowInsets(paddingValues)
         ) {
             item {
                 Row(Modifier.fillMaxWidth()) {

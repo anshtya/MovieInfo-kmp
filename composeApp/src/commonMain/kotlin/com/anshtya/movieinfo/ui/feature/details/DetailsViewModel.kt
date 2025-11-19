@@ -3,6 +3,7 @@ package com.anshtya.movieinfo.ui.feature.details
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.anshtya.movieinfo.common.data.model.LibraryItem
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.details.MovieDetails
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -31,45 +33,40 @@ class DetailsViewModel(
     private val libraryRepository: LibraryRepository,
     private val authRepository: AuthRepository
 ) : ViewModel() {
-    private val idDetailsString = savedStateHandle.getStateFlow(
-        key = idNavigationArgument,
-        initialValue = ""
-    )
+    private val details = savedStateHandle.toRoute<Details>()
+    private val detailsFlow = MutableStateFlow<Details?>(null)
 
     private val _uiState = MutableStateFlow(DetailsUiState())
     val uiState = _uiState.asStateFlow()
 
-    val contentDetailsUiState: StateFlow<ContentDetailUiState> = idDetailsString
-        .mapLatest { detailsString ->
-            detailsString.takeIf { it.isNotEmpty() }?.let {
-                val idDetails = getIdAndMediaType(detailsString)
-
-                val id = idDetails.first
-                when (idDetails.second) {
-                    MediaType.MOVIE -> {
-                        val response = detailsRepository.getMovieDetails(id)
-                        handleMovieDetailsResult(response)
-                    }
-
-                    MediaType.TV -> {
-                        val response = detailsRepository.getTvSeriesDetails(id)
-                        handleTvSeriesDetailsResult(response)
-                    }
-
-                    MediaType.PERSON -> {
-                        val response = detailsRepository.getPersonDetails(id)
-                        handlePeopleDetailsResult(response)
-                    }
-
-                    else -> ContentDetailUiState.Empty
+    val contentDetailsUiState: StateFlow<ContentDetailUiState> = detailsFlow
+        .filterNotNull()
+        .mapLatest {
+            when (it.type) {
+                MediaType.MOVIE -> {
+                    val response = detailsRepository.getMovieDetails(it.id)
+                    handleMovieDetailsResult(response)
                 }
-            } ?: ContentDetailUiState.Empty
-        }
-        .stateIn(
+
+                MediaType.TV -> {
+                    val response = detailsRepository.getTvSeriesDetails(it.id)
+                    handleTvSeriesDetailsResult(response)
+                }
+
+                MediaType.PERSON -> {
+                    val response = detailsRepository.getPersonDetails(it.id)
+                    handlePeopleDetailsResult(response)
+                }
+            }
+        }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
             initialValue = ContentDetailUiState.Loading
         )
+
+    init {
+        detailsFlow.update { details }
+    }
 
     fun addOrRemoveFavorite(libraryItem: LibraryItem) {
         viewModelScope.launch {
@@ -115,13 +112,6 @@ class DetailsViewModel(
 
     fun onHideBottomSheet() {
         _uiState.update { it.copy(showSignInSheet = false) }
-    }
-
-    private fun getIdAndMediaType(detailsString: String): Pair<Int, MediaType?> {
-        val details = detailsString.split(",")
-        val id = details.first().toInt()
-        val mediaType = enumValueOf<MediaType>(details.last())
-        return Pair(id, mediaType)
     }
 
     private suspend fun handleMovieDetailsResult(
@@ -199,7 +189,7 @@ data class DetailsUiState(
 )
 
 sealed interface ContentDetailUiState {
-    data object Loading: ContentDetailUiState
+    data object Loading : ContentDetailUiState
     data object Empty : ContentDetailUiState
     data class Movie(val data: MovieDetails) : ContentDetailUiState
     data class TvSeries(val data: TvSeriesDetails) : ContentDetailUiState

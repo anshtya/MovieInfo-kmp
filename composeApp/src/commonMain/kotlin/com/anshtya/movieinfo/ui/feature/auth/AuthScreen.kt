@@ -2,8 +2,12 @@ package com.anshtya.movieinfo.ui.feature.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -49,6 +53,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.ui.component.AnnotatedClickableText
@@ -126,9 +131,16 @@ internal fun AuthScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
+                .padding(
+                    PaddingValues(
+                        start = paddingValues.calculateStartPadding(LayoutDirection.Ltr) + 12.dp,
+                        end = paddingValues.calculateEndPadding(LayoutDirection.Ltr) + 12.dp,
+                        top = paddingValues.calculateTopPadding(),
+                        bottom = paddingValues.calculateBottomPadding()
+                    )
+                )
+                .consumeWindowInsets(paddingValues)
                 .fillMaxWidth()
-                .padding(paddingValues)
-                .padding(horizontal = 12.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             val focusManager = LocalFocusManager.current
