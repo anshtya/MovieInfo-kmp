@@ -28,6 +28,11 @@ kotlin {
         }
 
         androidResources.enable = true
+
+        optimization {
+            consumerKeepRules.publish = true
+            consumerKeepRules.files.add(project.file("consumer-proguard-rules.pro"))
+        }
     }
 
     // For iOS targets, this is also where you should
@@ -125,15 +130,16 @@ dependencies {
 }
 
 ksp {
-    arg("KOIN_CONFIG_CHECK","true")
-    arg("KOIN_DEFAULT_MODULE","false")
+    arg("KOIN_CONFIG_CHECK", "true")
+    arg("KOIN_DEFAULT_MODULE", "false")
     arg("room.schemaLocation", "${projectDir}/schemas")
 }
 
 // Trigger Common Metadata Generation from Native tasks
-tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMetadata" }.configureEach {
-    dependsOn("kspCommonMainKotlinMetadata")
-}
+tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMetadata" }
+    .configureEach {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
 
 buildkonfig {
     packageName = "com.anshtya.movieinfo.common.data"
