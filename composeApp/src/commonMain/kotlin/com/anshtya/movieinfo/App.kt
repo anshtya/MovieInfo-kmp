@@ -1,11 +1,14 @@
 package com.anshtya.movieinfo
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.common.data.local.datastore.preferences.SelectedDarkMode
 import com.anshtya.movieinfo.navigation.MovieInfoNavigation
@@ -30,10 +33,12 @@ fun App(
         darkTheme = shouldUseDarkTheme(uiState),
         dynamicColor = shouldUseDynamicColor(uiState)
     ) {
-        if (uiState is AppUiState.Success) {
-            MovieInfoNavigation(
-                hideOnboarding = (uiState as AppUiState.Success).hideOnboarding
-            )
+        Surface(Modifier.fillMaxSize()) {
+            if (uiState is AppUiState.Success) {
+                MovieInfoNavigation(
+                    hideOnboarding = (uiState as AppUiState.Success).hideOnboarding
+                )
+            }
         }
     }
 }
