@@ -1,11 +1,5 @@
 package com.anshtya.movieinfo.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,11 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -46,46 +35,25 @@ fun OnboardingScreen(
                 .consumeWindowInsets(paddingValues)
                 .fillMaxSize()
         ) {
-            var contentVisible by rememberSaveable { mutableStateOf(false) }
-            LaunchedEffect(Unit) {
-                contentVisible = true
-            }
-
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Spacer(Modifier.height(200.dp))
 
-                AnimatedVisibility(
-                    visible = contentVisible,
-                    enter = fadeIn() + slideInHorizontally(
-                        animationSpec = tween(easing = LinearOutSlowInEasing),
-                        initialOffsetX = { -it }
-                    )
-                ) {
-                    Text(
-                        text = stringResource(Res.string.app_title),
-                        style = MaterialTheme.typography.displayMedium,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+                Text(
+                    text = stringResource(Res.string.app_title),
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Bold
+                )
 
                 Spacer(Modifier.height(10.dp))
 
-                AnimatedVisibility(
-                    visible = contentVisible,
-                    enter = fadeIn() + slideInHorizontally(
-                        animationSpec = tween(easing = LinearOutSlowInEasing),
-                        initialOffsetX = { -it }
-                    )
-                ) {
-                    Text(
-                        text = stringResource(Res.string.onboarding_text),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
+                Text(
+                    text = stringResource(Res.string.onboarding_text),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold
+                )
             }
 
             Row(
@@ -93,26 +61,18 @@ fun OnboardingScreen(
                     .align(Alignment.BottomCenter)
                     .padding(horizontal = 10.dp)
             ) {
-                AnimatedVisibility(
-                    visible = contentVisible,
-                    enter = fadeIn() + slideInVertically(
-                        animationSpec = tween(durationMillis = 400),
-                        initialOffsetY = { it }
-                    )
+                Button(
+                    onClick = navigateToAuth,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .padding(bottom = 8.dp)
                 ) {
-                    Button(
-                        onClick = navigateToAuth,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .padding(bottom = 8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(Res.string.get_started),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
+                    Text(
+                        text = stringResource(Res.string.get_started),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.SemiBold
+                    )
                 }
             }
         }
