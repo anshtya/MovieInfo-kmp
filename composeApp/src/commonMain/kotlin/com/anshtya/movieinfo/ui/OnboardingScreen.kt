@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import movieinfo.composeapp.generated.resources.Res
@@ -64,6 +65,7 @@ fun OnboardingScreen(
                 Button(
                     onClick = navigateToAuth,
                     modifier = Modifier
+                        .testTag("get_started")
                         .fillMaxWidth()
                         .height(56.dp)
                         .padding(bottom = 8.dp)

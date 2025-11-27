@@ -1,12 +1,17 @@
 package com.anshtya.movieinfo.ui.theme
 
 import android.os.Build
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import com.anshtya.movieinfo.ui.feature.you.SupportsDynamicTheme
 
 @Composable
@@ -29,9 +34,15 @@ actual fun MovieInfoTheme(
     CompositionLocalProvider(SupportsDynamicTheme provides supportsDynamicTheme) {
         MaterialTheme(
             colorScheme = colorScheme,
-            typography = Typography,
-            content = content
-        )
+            typography = Typography
+        ) {
+            Surface(
+                modifier = Modifier
+                    .semantics { testTagsAsResourceId = true }
+                    .fillMaxSize(),
+                content = content
+            )
+        }
     }
 }
 

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.baselineprofile)
 }
 
 kotlin {
@@ -45,6 +46,8 @@ kotlin {
             implementation(libs.koin.android)
             implementation(libs.koin.androidx.workmanager)
             implementation(libs.ktor.client.okhttp)
+
+            implementation(libs.androidx.profileinstaller)
         }
         commonMain.dependencies {
             implementation(projects.commonData)
@@ -133,6 +136,8 @@ tasks.matching { it.name.startsWith("ksp") && it.name != "kspCommonMainKotlinMet
 
 dependencies {
     debugImplementation(compose.uiTooling)
+
+    baselineProfile(project(":baselineprofile"))
 
     listOf(
         "kspCommonMainMetadata",

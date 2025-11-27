@@ -19,3 +19,4 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "MovieInfo"
 include(":composeApp")
 include(":common-data")
+include(":baselineprofile")

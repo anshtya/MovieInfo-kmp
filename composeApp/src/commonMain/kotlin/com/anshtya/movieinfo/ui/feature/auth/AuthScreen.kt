@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
@@ -260,6 +261,7 @@ internal fun AuthScreen(
                     Button(
                         onClick = onContinueWithoutSignInClick,
                         modifier = Modifier
+                            .testTag("continue")
                             .fillMaxWidth()
                             .height(52.dp)
                     ) {

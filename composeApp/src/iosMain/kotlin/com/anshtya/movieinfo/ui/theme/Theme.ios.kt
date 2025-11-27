@@ -1,7 +1,10 @@
 package com.anshtya.movieinfo.ui.theme
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 actual fun MovieInfoTheme(
@@ -16,7 +19,11 @@ actual fun MovieInfoTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+        typography = Typography
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            content = content
+        )
+    }
 }

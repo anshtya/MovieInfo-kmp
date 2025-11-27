@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -136,7 +137,8 @@ private fun Main(
                 currentDestination = currentDestination,
                 onNavigateToDestination = { destination ->
                     navController.navigateToBottomBarDestination(destination)
-                }
+                },
+                modifier = Modifier.testTag("bottom_bar")
             )
         }
     ) { innerPadding ->
@@ -161,9 +163,10 @@ private fun Main(
 private fun MovieInfoNavigationBar(
     destinations: List<MainRoute>,
     currentDestination: NavDestination?,
-    onNavigateToDestination: (MainRoute) -> Unit
+    onNavigateToDestination: (MainRoute) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    NavigationBar {
+    NavigationBar(modifier) {
         destinations.forEach { destination ->
             val selected = currentDestination.isDestinationInHierarchy(destination)
             NavigationBarItem(
