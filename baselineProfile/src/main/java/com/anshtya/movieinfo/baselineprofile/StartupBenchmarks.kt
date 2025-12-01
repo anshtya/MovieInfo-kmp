@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import androidx.test.platform.app.InstrumentationRegistry
 import com.anshtya.movieinfo.baselineprofile.journey.goToMainGraph
+import com.anshtya.movieinfo.baselineprofile.journey.moviesFeedJourney
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -44,6 +45,7 @@ class StartupBenchmarks {
                 startActivityAndWait()
 
                 goToMainGraph()
+                moviesFeedJourney()
             }
         )
     }

@@ -22,11 +22,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.anshtya.movieinfo.common.data.model.MediaType
 import com.anshtya.movieinfo.common.data.model.category.MovieListCategory
+import com.anshtya.movieinfo.platform.ui.ReportDrawnWhen
 import com.anshtya.movieinfo.ui.FeedType
 import com.anshtya.movieinfo.ui.component.ContentSectionHeader
 import com.anshtya.movieinfo.ui.component.LazyRowContentSection
@@ -101,7 +103,9 @@ internal fun MoviesFeedScreen(
                 start = paddingValues.calculateStartPadding(LayoutDirection.Ltr),
                 end = paddingValues.calculateEndPadding(LayoutDirection.Ltr)
             ),
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("movie_feed_list"),
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             item {
@@ -110,7 +114,8 @@ internal fun MoviesFeedScreen(
                     sectionName = stringResource(Res.string.now_playing),
                     appendItems = appendItems,
                     onItemClick = onItemClick,
-                    onSeeAllClick = onSeeAllClick
+                    onSeeAllClick = onSeeAllClick,
+                    modifier = Modifier.testTag("movie_feed_content")
                 )
             }
             item {
@@ -119,7 +124,8 @@ internal fun MoviesFeedScreen(
                     sectionName = stringResource(Res.string.popular),
                     appendItems = appendItems,
                     onItemClick = onItemClick,
-                    onSeeAllClick = onSeeAllClick
+                    onSeeAllClick = onSeeAllClick,
+                    modifier = Modifier.testTag("movie_feed_content")
                 )
             }
             item {
@@ -128,7 +134,8 @@ internal fun MoviesFeedScreen(
                     sectionName = stringResource(Res.string.top_rated),
                     appendItems = appendItems,
                     onItemClick = onItemClick,
-                    onSeeAllClick = onSeeAllClick
+                    onSeeAllClick = onSeeAllClick,
+                    modifier = Modifier.testTag("movie_feed_content")
                 )
             }
             item {
@@ -137,9 +144,17 @@ internal fun MoviesFeedScreen(
                     sectionName = stringResource(Res.string.upcoming),
                     appendItems = appendItems,
                     onItemClick = onItemClick,
-                    onSeeAllClick = onSeeAllClick
+                    onSeeAllClick = onSeeAllClick,
+                    modifier = Modifier.testTag("movie_feed_content")
                 )
             }
+        }
+
+        ReportDrawnWhen {
+            nowPlayingMovies.items.isNotEmpty() ||
+                    popularMovies.items.isNotEmpty() ||
+                    topRatedMovies.items.isNotEmpty() ||
+                    upcomingMovies.items.isNotEmpty()
         }
     }
 }
@@ -150,7 +165,8 @@ private fun ContentSection(
     sectionName: String,
     appendItems: (MovieListCategory) -> Unit,
     onItemClick: (Int, MediaType) -> Unit,
-    onSeeAllClick: (FeedType, String) -> Unit
+    onSeeAllClick: (FeedType, String) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyRowContentSection(
         pagingEnabled = true,
@@ -175,7 +191,8 @@ private fun ContentSection(
                     posterPath = it.imagePath,
                     onItemClick = {
                         onItemClick(it.id, MediaType.MOVIE)
-                    }
+                    },
+                    modifier = Modifier.testTag("movie_item")
                 )
             }
 
@@ -191,6 +208,6 @@ private fun ContentSection(
                 }
             }
         },
-        modifier = Modifier.height(160.dp)
+        modifier = modifier.height(160.dp)
     )
 }
